@@ -25,8 +25,18 @@ separate serial build.
 cd software/shdom
 mkdir -p build && make mpi
 cd ../..
+```
+
+Then set `SHDOM_EXE` and put the new binaries on `PATH`:
+
+```bash
+# bash/zsh:
 export SHDOM_EXE="$(pwd)/software/shdom/build/bin/shdom"
 export PATH="$(pwd)/software/shdom/build/bin:$PATH"
+
+# csh/tcsh:
+setenv SHDOM_EXE "`pwd`/software/shdom/build/bin/shdom"
+setenv PATH "`pwd`/software/shdom/build/bin:$PATH"
 ```
 
 ## 3. Python environment
