@@ -1,3 +1,6 @@
 [submodule "software/er3t"]
 	path = software/er3t
 	url = https://github.com/hong-chen/er3t.git
+[submodule "software/shdom"]
+	path = software/shdom
+	url = https://github.com/hong-chen/shdom.git
