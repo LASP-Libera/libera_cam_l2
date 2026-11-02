@@ -45,18 +45,61 @@ This project uses [`uv`](https://docs.astral.sh/uv/) -- the same tool
 the Dockerfile uses, so your local environment and the containerized
 one are built the same way.
 
+### 3a. `pyhdf` needs the HDF4 C library first
+
+`pyhdf` (an `er3t`/`cam_l2` dependency) compiles a C extension against
+the old NASA HDF4 library -- a system library, not something `uv`/pip
+installs for you. If this step is skipped, `uv sync` fails while
+building `pyhdf` with `fatal error: 'hdf.h' file not found`.
+
+If you already have a conda environment with a working `pyhdf` in it
+(common on LASP machines -- check with `conda env list`, then
+`ls <env-path>/include/hdf.h`), just point at it:
+
+```tcsh
+setenv INCLUDE_DIRS "<env-path>/include"
+setenv LIBRARY_DIRS "<env-path>/lib"
+```
+```bash
+export INCLUDE_DIRS="<env-path>/include"
+export LIBRARY_DIRS="<env-path>/lib"
+```
+
+Otherwise, get HDF4 from conda-forge into a small, dedicated
+environment -- `-p` with a path under your home directory avoids
+touching (or needing write access to) any existing/shared conda
+install, and avoids the large, unrelated update cascade that
+installing into an existing env can trigger:
+
+```bash
+conda create -p ~/.conda-envs/hdf4-libs -c conda-forge hdf4 -y
+```
+
+then point `INCLUDE_DIRS`/`LIBRARY_DIRS` at `~/.conda-envs/hdf4-libs/{include,lib}`
+the same way as above. (Homebrew no longer packages `hdf4` as of
+2026, so `brew install hdf4` will not work.)
+
+### 3b. Build the environment
+
 ```bash
 pip install uv   # if you don't already have it
 uv sync
-uv pip install -e software/er3t
-uv pip install -e .
+```
+```tcsh
+source .venv/bin/activate.csh
+```
+```bash
 source .venv/bin/activate
 ```
+
+`uv sync` installs `cam_l2` and the pinned, editable `er3t` submodule
+on its own (via `[tool.uv.sources]` in `pyproject.toml`) -- no
+separate `uv pip install -e ...` step needed.
 
 Sanity-check:
 
 ```bash
-python -c "import er3t; import cam_l2; print('er3t + cam_l2 OK')"
+python -c "import er3t; import cam_l2; import pyhdf; print('er3t + cam_l2 + pyhdf OK')"
 which shdom || echo "put software/shdom/build/bin on PATH, or set SHDOM_EXE"
 ```
 
