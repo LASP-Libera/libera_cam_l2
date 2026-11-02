@@ -2,6 +2,8 @@
 
 ## 1. Clone with submodules
 
+**Status (2026-11-02): `software/shdom` is not in this repo yet.** `hong-chen/shdom` on GitHub isn't public yet -- Sebastian has asked Hong to make it accessible (he already did this for `er3t`). Until then, only the `er3t` submodule is pinned here; step 2 below (build SHDOM) can't be completed. Everything else -- `libcam/`, the `cam_l2` scripts, the patch layer -- is in place and worth exploring/setting up now.
+
 ```bash
 git clone --recurse-submodules git@github.com:LASP-Libera/libera_cam_l2.git
 cd libera_cam_l2
@@ -13,11 +15,7 @@ If you already cloned without `--recurse-submodules`:
 git submodule update --init --recursive
 ```
 
-This pulls `vendor/er3t` and `vendor/shdom` at the exact commit this
-repo is pinned to -- unmodified, straight from Hong Chen's own public
-GitHub repos. Don't expect (or make) any local changes inside
-`vendor/`; everything this project needs beyond upstream lives in
-`l2/er3t_compat.py` -- see `docs/PATCHES.md`.
+This pulls `software/er3t` at the exact commit this repo is pinned to -- unmodified, straight from Hong Chen's own public GitHub repo. `software/shdom` will be added as a pinned submodule the same way once it's public. Don't expect (or make) any local changes inside `software/`; everything this project needs beyond upstream lives in `l2/er3t_compat.py` -- see `docs/PATCHES.md`.
 
 ## 2. Build SHDOM
 
@@ -26,11 +24,11 @@ Requires a Fortran compiler (`gfortran`) and an MPI implementation
 separate serial build.
 
 ```bash
-cd vendor/shdom
+cd software/shdom
 mkdir -p build && make mpi
 cd ../..
-export SHDOM_EXE="$(pwd)/vendor/shdom/build/bin/shdom"
-export PATH="$(pwd)/vendor/shdom/build/bin:$PATH"
+export SHDOM_EXE="$(pwd)/software/shdom/build/bin/shdom"
+export PATH="$(pwd)/software/shdom/build/bin:$PATH"
 ```
 
 ## 3. Python environment
@@ -42,7 +40,7 @@ one are built the same way.
 ```bash
 pip install uv   # if you don't already have it
 uv sync
-uv pip install -e vendor/er3t
+uv pip install -e software/er3t
 uv pip install -e .
 source .venv/bin/activate
 ```
@@ -51,7 +49,7 @@ Sanity-check:
 
 ```bash
 python -c "import er3t; import cam_l2; print('er3t + cam_l2 OK')"
-which shdom || echo "put vendor/shdom/build/bin on PATH, or set SHDOM_EXE"
+which shdom || echo "put software/shdom/build/bin on PATH, or set SHDOM_EXE"
 ```
 
 ## 4. Earthdata token
