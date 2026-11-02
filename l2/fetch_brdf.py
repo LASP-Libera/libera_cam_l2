@@ -218,8 +218,6 @@ def fetch_brdf_for_date(date, short_name=DEFAULT_SHORT_NAME, version=DEFAULT_VER
 
     try:
         _add_l2_cam_to_path(l2_cam_root)
-        import er3t_compat  # noqa: E402  (sibling module, needs er3t_dir on sys.path first)
-        er3t_compat.apply_patches()  # idempotent; fixes real er3t.util.daac bugs -- see docs/PATCHES.md
         from er3t.util import get_command_earthdata, final_file_check
         url, granule_id, size_mb = find_granule(date, short_name, version,
                                                 verbose=verbose)

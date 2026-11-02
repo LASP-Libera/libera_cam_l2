@@ -1,61 +1,83 @@
 # Patches carried on top of `er3t`/`shdom`
 
 `software/er3t` and `software/shdom` are git submodules pinned to Hong
-Chen's own public GitHub repos at `release/v0.2.0-alpha.1`, completely
-unmodified -- there is no diff against upstream anywhere in those two
-directories. Everything this project needs beyond what upstream
-provides lives in `l2/er3t_compat.py`, applied once at runtime via
-`apply_patches()` (called at the top of `run_tile_rt.py`). This file
-exists so the *why* isn't buried in that module's comments alone.
+Chen's own public GitHub repos, on his `libera-l2-fixes` branches (each
+branched off `release/v0.2.0-alpha.1`). These are **real, direct commits
+on Hong's repos** -- not a vendored/hand-patched copy, and not a runtime
+monkeypatch layer applied by this project. That's a change from how this
+worked earlier in development: a previous version of this repo carried
+the same three fixes as runtime patches in `l2/er3t_compat.py`, applied
+via `apply_patches()` at the top of a few scripts. Once Hong gave us
+collaborator access and suggested making Libera-specific branches
+directly on his own repos, we moved the fixes there instead and deleted
+`er3t_compat.py` (2026-11-02) -- there is no diff left to carry in this
+repo at all; `software/er3t` and `software/shdom` are simply pinned past
+the commits that contain these fixes.
 
-## 1. `shd_run` always wraps the SHDOM call in `mpirun`
+All four fixes below are, in Hong's own words, "generally applicable
+improvements" he intends to eventually merge into his `master`/mainline.
+Once that happens and this repo's pin is bumped past the merge, the
+corresponding `libera-l2-fixes` branch is no longer needed and the pin
+can move to whatever branch/tag Hong designates at that point.
 
-Upstream only wraps the call in `mpirun -np Ncpu` when `Ncpu > 1`; at
-`Ncpu=1` it runs the raw `shdom` binary directly, no MPI runtime at
-all. This repo's `shdom` build is MPI-linked (`make mpi`, no separate
+## 1. `shd_run` always wraps the SHDOM call in `mpirun` (`er3t`)
+
+Upstream only wrapped the call in `mpirun -np Ncpu` when `Ncpu > 1`; at
+`Ncpu=1` it ran the raw `shdom` binary directly, no MPI runtime at all.
+This project's `shdom` build is MPI-linked (`make mpi`, no separate
 serial binary), so that path silently produced a single NaN ray plus
-SHDOM's un-overwritten `-1` fill value for everything else -- not a
-real solve. Fixed by always routing through `mpirun`, `Ncpu=1`
-included; a genuinely single-process run still hits SHDOM's own
-internal serial early-out, it just gets the MPI environment it needs
-to run at all.
+SHDOM's un-overwritten `-1` fill value for everything else -- not a real
+solve. Fixed on `libera-l2-fixes` by always routing through `mpirun`,
+`Ncpu=1` included; a genuinely single-process run still hits SHDOM's own
+internal serial early-out, it just gets the MPI environment it needs to
+run at all. (`er3t/rtm/shd/shd_run.py`)
 
-Mechanics: this is a full replacement of `shd_run.__init__`, mutating
-the class object in place (not reassigning a module name), because
-`shdom.py` imports the class itself via `from er3t.rtm.shd import
-shd_run` -- patching only takes effect if the actual object both
-modules reference is mutated.
+## 2. `shdom_ng` gets an open (non-periodic) boundary-condition option (`er3t`)
 
-## 2. `shdom_ng` gets an open (non-periodic) boundary condition option
+Upstream hardcoded `BCFLAG=0` (periodic in X & Y) inside `nml_init()`,
+with no way to override it. `libera-l2-fixes` adds a `bcflag=` constructor
+argument to `shdom_ng` (default `0`, matching upstream's prior hardcoded
+behavior) so callers can opt into open boundaries. (`er3t/rtm/shd/shdom.py`)
 
-Upstream hardcodes `BCFLAG=0` (periodic in X & Y) with no way to
-override it. Periodic BC isn't physically right for a single isolated
-tile cut from a larger scene -- its edges have no real relationship to
-wrap into each other -- and was a suspected contributor to a tile-edge
-artifact found during development. `PatchedShdomNG` (a small subclass,
-not a full-method replacement -- `nml_init()` only builds an in-memory
-dict, so the subclass calls the original via `super()` and then fixes
-one value) adds a `bcflag=` constructor argument; `run_tile_rt.py`
-passes `bcflag=3` (open in X & Y) for single-tile runs.
+**Current status in this repo:** `run_tile_rt.py` does **not** currently
+pass `bcflag=` and runs with the default (periodic, `BCFLAG=0`). We tried
+`bcflag=3` (open in X & Y) on 2026-10-22 to work around a suspected
+tile-edge artifact, but found it had zero effect under `mp_mode="mpi"` --
+SHDOM's own MPI domain-decomposition forces periodic boundaries
+regardless of `BCFLAG` in that mode. The override is available in the
+pinned `shdom_ng` for anyone who wants to experiment with `mp_mode="py"`
+or `"sh"`, but it is not presently wired into this project's orchestration
+code.
 
-## 3. No hardcoded Earthdata token; longer download timeout
+## 3. No hardcoded Earthdata token; longer download timeout (`er3t`)
 
-Upstream's `get_token_earthdata()` fell back to a live-looking
-hardcoded bearer token when `EARTHDATA_TOKEN` wasn't set. Fixed to
-return `None` with a clear warning instead -- **every user sets their
-own `EARTHDATA_TOKEN` in their own shell rc file; nothing is ever
-hardcoded in this repository.** Bundled in the same fix: `curl
---max-time` raised from 60.0 to 1800.0 seconds across all three
+Upstream's `get_token_earthdata()` fell back to a live-looking hardcoded
+bearer token when `EARTHDATA_TOKEN` wasn't set in the environment. Fixed
+on `libera-l2-fixes` to return `None` with a clear warning instead --
+**every user sets their own `EARTHDATA_TOKEN` in their own shell rc file;
+nothing is ever hardcoded in this repository.** Bundled in the same fix:
+`curl --max-time` raised from 60.0 to 1800.0 seconds across all three
 request variants in `get_command_earthdata()`, since downloads were
-timing out at 60s.
+timing out at 60s. (`er3t/util/daac.py`)
 
-## When to retire a patch
+**Security note:** the token that was hardcoded upstream is a real,
+live-looking credential, and it is still visible in the history of
+Hong's public `master`/`release/v0.2.0-alpha.1` branches (removing it
+on `libera-l2-fixes` doesn't erase it from earlier history). Hong should
+rotate/revoke that Earthdata token.
 
-Each override carries a signature/version guard that fails loudly if
-a future `software/er3t` pin bump changes the internals it targets. If
-you bump the pin and a guard trips, check whether Hong's new version
-already includes the corresponding fix -- if so, delete that patch
-from `er3t_compat.py` rather than carrying dead code. All three of
-these are intended to be upstreamed into Hong's actual repos; once
-that happens and the pin moves past it, this file (and the
-corresponding function in `er3t_compat.py`) should shrink accordingly.
+## 4. Command-line argument buffer overflow in `shdTool_put` (`shdom`)
+
+`src/tools/shdTool_put.f90` declared its argument buffer as
+`character(len=1200)`, too short for some of the long command lines
+SHDOM's batch tooling constructs. Widened to `character(len=5000)` on
+`libera-l2-fixes`, matching a fix already silently carried in LASP
+Nucleus's vendored copy of this file but never upstreamed or documented
+before now.
+
+## When to retire a patch / bump the pin
+
+If Hong merges one of these into his own mainline, check whether the pin
+can move past it; once all four are merged upstream, `software/er3t` and
+`software/shdom` can be re-pinned to his regular release branch/tag and
+this file can be deleted.

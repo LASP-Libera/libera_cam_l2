@@ -1988,8 +1988,6 @@ def rt_shdom(data, l2_cam_root, wavelength_nm, altitude_km, Niter=10,
                 "SHDOM_EXE yourself before running this script."
                 % (shdom_exe, l2_cam_root))
     import er3t  # noqa: E402  (after SHDOM_EXE is set -- er3t.common reads it at import time)
-    import er3t_compat  # noqa: E402  (sibling module, l2/ already on sys.path)
-    er3t_compat.apply_patches()  # idempotent; fixes a real shd_run bug -- see docs/PATCHES.md
 
     tm = data["tile_mean_angles"]
     nx, ny = data["lon_land"].shape

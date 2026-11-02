@@ -460,18 +460,34 @@ def parse_args():
     p.add_argument("--proxy-out-dir", default="apps/l2/data/proxy_imagery",
                   help="step 1: where downloaded MODIS files go "
                        "(default: %(default)s)")
-    p.add_argument("--cam-l1b", default=pr.DEFAULT_CAM_L1B,
+    p.add_argument("--input-manifest", default=None,
+                  help="an upstream LIBERA_INPUT_MANIFEST_*.json listing "
+                       "the REAL cam_l1b/rad_l1b/era5 files for this run "
+                       "(fixed orbit baseline, NOT affected by "
+                       "--proxy-date) -- same manifest build_input_"
+                       "manifest.py produces, and the same role-by-"
+                       "filename classification run_dev_step1.py uses. "
+                       "Required inputs are handled strictly via manifest "
+                       "from here, not hardcoded per-machine paths: if "
+                       "omitted, the most recent manifest under "
+                       "--manifest-out-dir is used instead. Any of "
+                       "--cam-l1b/--rad-l1b/--era5 given explicitly "
+                       "overrides just that one role.")
+    p.add_argument("--cam-l1b", default=None,
                   help="step 2: the REAL camera L1B to crop/splice into -- "
-                       "the fixed orbit baseline, NOT affected by "
-                       "--proxy-date (default: %(default)s)")
-    p.add_argument("--rad-l1b", default=pr.DEFAULT_RAD_L1B,
+                       "overrides the 'cam_l1b' role from --input-manifest; "
+                       "normally left unset so the manifest supplies it")
+    p.add_argument("--rad-l1b", default=None,
                   help="steps 2+3: the REAL radiometer L1B, used for time "
                        "matching in step 2 and written as-is into the new "
-                       "manifest in step 3 -- fixed orbit baseline, NOT "
-                       "affected by --proxy-date (default: %(default)s)")
-    p.add_argument("--era5", default=bim.DEFAULT_ERA5,
-                  help="step 3: written as-is into the new manifest "
-                       "(default: %(default)s)")
+                       "manifest in step 3 -- overrides the 'rad_l1b' role "
+                       "from --input-manifest; normally left unset")
+    p.add_argument("--era5", default=None,
+                  help="step 3: written as-is into the new manifest -- "
+                       "overrides the 'era5' role from --input-manifest; "
+                       "normally left unset. ERA5 has no public archive, "
+                       "so this is never auto-fetched, only ever supplied "
+                       "via manifest or this explicit override.")
     p.add_argument("--brdf-land", default=None,
                   help="step 3: explicit real, date-matched VJ143C1 BRDF "
                        "file to use -- optional, see build_input_manifest.py. "
@@ -514,6 +530,28 @@ def parse_args():
 
 def main():
     args, passthrough = parse_args()
+
+    if args.cam_l1b is None or args.rad_l1b is None or args.era5 is None:
+        from libera_utils import Manifest
+        manifest_path_in = args.input_manifest or run_dev_step1.latest_manifest(
+            args.manifest_out_dir)
+        print("Resolving cam_l1b/rad_l1b/era5 from input manifest: %s"
+             % manifest_path_in)
+        manifest_in = Manifest.from_file(manifest_path_in)
+        roles_in = run_dev_step1.classify_manifest_files(manifest_in)
+        if args.cam_l1b is None:
+            args.cam_l1b = roles_in["cam_l1b"]
+        if args.rad_l1b is None:
+            args.rad_l1b = roles_in["rad_l1b"]
+        if args.era5 is None:
+            args.era5 = roles_in["era5"]
+        for role in ("cam_l1b", "rad_l1b", "era5"):
+            path = getattr(args, role)
+            if not os.path.exists(path):
+                raise FileNotFoundError(
+                    "Input manifest lists %s but it does not exist on "
+                    "disk: %s" % (role, path))
+            print("  %-10s %s" % (role + ":", path))
 
     for flag in REJECTED_PASSTHROUGH_FLAGS:
         if _has_flag(passthrough, flag):

@@ -1,6 +1,8 @@
 [submodule "software/er3t"]
 	path = software/er3t
 	url = https://github.com/hong-chen/er3t.git
+	branch = libera-l2-fixes
 [submodule "software/shdom"]
 	path = software/shdom
 	url = https://github.com/hong-chen/shdom.git
+	branch = libera-l2-fixes

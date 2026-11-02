@@ -305,8 +305,6 @@ def parse_args():
 def main():
     args = parse_args()
     _add_l2_cam_to_path(args.l2_cam_root)
-    import er3t_compat  # noqa: E402  (sibling module, needs er3t_dir on sys.path first)
-    er3t_compat.apply_patches()  # idempotent; fixes real er3t.util.daac bugs -- see docs/PATCHES.md
 
     tile_pick = load_tile_pick(args.tile_pick)
     lat, lon, t_center = tile_pick["lat"], tile_pick["lon"], tile_pick["time_utc"]
