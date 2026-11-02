@@ -7,7 +7,7 @@ name = "cam_l2"
 version = "0.1.0"
 description = "Libera WFOV Camera L2 processing (cloud detection / cloud fraction) -- consolidated, with er3t/shdom pulled as pinned, unmodified dependencies rather than vendored copies"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 authors = [
     {name = "Sebastian Schmidt", email = "sebastian.schmidt@lasp.colorado.edu"},
     ]
