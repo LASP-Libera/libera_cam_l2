@@ -1,0 +1,5 @@
+system,param,table_id,description,value
+icie,wfov_tbl_xcenter_limb,13,Center pixel X coordinate with respect to FPA coordinate system,1024
+icie,wfov_tbl_ycenter_limb,13,Center pixel Y coordinate with respect to FPA coordinate system,1024
+icie,wfov_tbl_r1,13,radius 1,895
+icie,wfov_tbl_r2,13,radius 2,1024

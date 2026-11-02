@@ -1,0 +1,18 @@
+system,param,table_id,description,value
+icie,wfov_tbl_exp1,11,Exposure Time 1,1
+icie,wfov_tbl_exp2,11,Exposure Time 2,25
+icie,wfov_tbl_inter_img,11,Inter Image Delay,153600000
+icie,wfov_tbl_delta,11,Dual Delta Time,2240000
+icie,wfov_tbl_white_lim,11,White Limit,4095
+icie,wfov_tbl_black_lim,11,Black Limit,0
+icie,wfov_tbl_2p1v,11,Current Limit 2.1V,65535
+icie,wfov_tbl_3p3v,11,Current Limit 3.3V,65535
+icie,wfov_tbl_offset,11,Offset,16323
+icie,wfov_tbl_spw_txdiv,11,SPW Tx Div,0
+icie,wfov_tbl_freqdiv,11,Freq Div,9
+icie,wfov_tbl_pix_res,11,Pixel Resolution,12
+icie,wfov_tbl_vramp1,11,VRamp 1,109
+icie,wfov_tbl_vramp2,11,VRamp 2,109
+icie,wfov_tbl_adc_gain,11,ADC Gain,60
+icie,wfov_tbl_pix_sel,11,Pixel Select Threshold,2048
+icie,REUSABLE_SPARE_16,11,,0

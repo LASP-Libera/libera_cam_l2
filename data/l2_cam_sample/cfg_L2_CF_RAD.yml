@@ -1,0 +1,65 @@
+# Libera WFOV Camera L2 Data Product Definition
+# This file defines the metadata and structure for Libera WFOV Camera L2
+# Product
+#
+# For more information on Libera data product identifiers, see:
+# https://libera-utils.readthedocs.io/en/latest/
+
+static_product_metadata:
+  # Data Product Identifier - change this to match your specific product
+  # Other Examples: L1B_RAD-4CH, L1B_CAM, L2_SSW-TOA-FLUXES-ERBE
+  ProductID: L2_CF-RAD
+
+  # Version number in M.m.p format (Major.minor.patch)
+  version: 0.2.0
+
+# Variable definitions for your science data product
+# Each variable must include: long_name, dimensions, units, valid_range, missing_value, dtype
+variables:
+  time_stamp:
+    long_name: "UTC Time of measurement"
+    dimensions: ["n_samples"]  # n_samples is a dynamic dimension that adjusts to your data size
+    units: datetime64[ns]
+    valid_range: [0, 1]  # This will be updated automatically for datetime variables
+    missing_value: -9999
+    dtype: datetime64
+
+  cloud_fraction:
+    long_name: "Cloud Fraction"
+    dimensions: ["n_samples"]
+    units: "N/A"
+    valid_range: [0, 1]
+    missing_value: -9999.0
+    dtype: float64
+
+  cloud_fraction_uncertainty:
+    long_name: "Uncertainty in Cloud Fraction"
+    dimensions: ["n_samples"]
+    units: "N/A"
+    valid_range: [0, 1]  # Adjust based on your expected uncertainty range
+    missing_value: -9999.0
+    dtype: float64
+
+  latitude:
+    long_name: "Geodetic latitude"
+    dimensions: ["n_samples"]
+    units: "degrees_north"
+    valid_range: [-90, 90]
+    missing_value: -999.0
+    dtype: float64
+
+  longitude:
+    long_name: "Geodetic longitude"
+    dimensions: ["n_samples"]
+    units: "degrees_east"
+    valid_range: [-180, 180]
+    missing_value: -999.0
+    dtype: float64
+
+  quality_flags:
+    long_name: "Data quality flags"
+    dimensions: ["n_samples"]
+    units: "1"  # Dimensionless
+    valid_range: [0, 255]  # 8-bit flags: 0=good, 1=questionable, 2=bad, etc.
+    missing_value: -1
+    dtype: int32

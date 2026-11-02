@@ -1,0 +1,16 @@
+system,param,table_id,description,value
+icie,wfov_tbl_lockon_coeff1_0,15,Coefficient set 1,1.46e-16
+icie,wfov_tbl_lockon_coeff1_1,15,Coefficient set 1,-9.08e-14
+icie,wfov_tbl_lockon_coeff1_2,15,Coefficient set 1,2.23e-09
+icie,wfov_tbl_lockon_coeff1_3,15,Coefficient set 1,-2.77e-06
+icie,wfov_tbl_lockon_coeff1_4,15,Coefficient set 1,0.00194
+icie,wfov_tbl_lockon_coeff1_5,15,Coefficient set 1,-0.872
+icie,wfov_tbl_lockon_coeff1_6,15,Coefficient set 1,949
+icie,wfov_tbl_lockon_coeff2_0,15,Coefficient set 1,1.23e-16
+icie,wfov_tbl_lockon_coeff2_1,15,Coefficient set 1,-7.66e-13
+icie,wfov_tbl_lockon_coeff2_2,15,Coefficient set 1,1.88e-09
+icie,wfov_tbl_lockon_coeff2_3,15,Coefficient set 1,-2.34e-06
+icie,wfov_tbl_lockon_coeff2_4,15,Coefficient set 1,0.00166
+icie,wfov_tbl_lockon_coeff2_5,15,Coefficient set 1,-0.767
+icie,wfov_tbl_lockon_coeff2_6,15,Coefficient set 1,960
+icie,wfov_tbl_lockon_w0,15,w0 parameter,0

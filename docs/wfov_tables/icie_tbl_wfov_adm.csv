@@ -1,0 +1,8 @@
+system,param,table_id,description,value
+icie,wfov_tbl_persamp,12,Percent of angular bins to sample at each exposure,100
+icie,wfov_tbl_maxPixR,12,Circular radius of pixels for each ADM sample,20
+icie,wfov_tbl_shift_num,12,Number of samples to shift per mask,162
+icie,wfov_tbl_vaashift,12,Degrees Shift of viewing azimuth angle bin per mask [deg],0.9
+icie,wfov_tbl_vzashift,12,Degrees Shift of viewing zenith angle bin per mask [deg],0.9
+icie,wfov_tbl_vaashift_init,12,Initial Shift of viewing azimuth angle bin [deg],0
+icie,wfov_tbl_vzashift_init,12,Initial Shift of viewing zenith angle bin [deg],0

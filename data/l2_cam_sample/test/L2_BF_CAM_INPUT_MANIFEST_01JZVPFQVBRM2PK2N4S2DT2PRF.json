@@ -1,0 +1,8 @@
+{"manifest_type":"INPUT",
+    "files":[{
+        "filename":"/data/LIBERA_L1B_RAD-4CH_V0-0-1_20270101T000000_20270101T015959_R25181003409.nc",
+        "checksum":"b9a10d5e63955522104e8d0512a51276"}],
+    "configuration":
+        {},
+        "filename":"L2_BF_CAM_INPUT_MANIFEST_01JZVPFQVBRM2PK2N4S2DT2PRF.json",
+        "ulid_code":null}

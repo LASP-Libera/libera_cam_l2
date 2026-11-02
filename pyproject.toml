@@ -1,0 +1,46 @@
+[build-system]
+requires = ["uv_build >= 0.1.0, < 1.0.0"]
+build-backend = "uv_build"
+
+[project]
+name = "cam_l2"
+version = "0.1.0"
+description = "Libera WFOV Camera L2 processing (cloud detection / cloud fraction) -- consolidated, with er3t/shdom pulled as pinned, unmodified dependencies rather than vendored copies"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    {name = "Sebastian Schmidt", email = "sebastian.schmidt@lasp.colorado.edu"},
+    ]
+classifiers = [
+    'Development Status :: 3 - Alpha',
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    'Topic :: Scientific/Engineering :: Atmospheric Science',
+    ]
+dependencies = [
+    "er3t",
+    "cartopy",
+    "h5py",
+    "matplotlib",
+    "netcdf4",
+    "numpy",
+    "owslib",
+    "psutil",
+    "pysolar",
+    "pyhdf",
+    "requests",
+    "scikit-image",
+    "scipy",
+    "tqdm",
+    "uuid-utils",
+    "structlog",
+    "colorama",
+    "xarray",
+    "libera-utils==5.5.2",
+    ]
+
+[project.urls]
+Homepage = "https://github.com/LASP-Libera/libera_cam_l2"
+
+[tool.uv.sources]
+er3t = {path = "software/er3t", editable = true}

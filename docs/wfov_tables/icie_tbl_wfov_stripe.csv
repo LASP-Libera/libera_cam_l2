@@ -1,0 +1,33 @@
+system,param,table_id,description,value
+icie,wfov_tbl_xcenter_stripe_nadir,14,Center pixel X coordinate with respect to FPA coordinate system,1015
+icie,wfov_tbl_ycenter_stripe_nadir,14,Center pixel Y coordinate with respect to FPA coordinate system,949
+icie,wfov_tbl_fovr_nadir,14,Radius of FOV to be populated with pixels,1000
+icie,wfov_tbl_ydist_nadir,14,Y distance of stripe from origin (FPA center),0
+icie,wfov_tbl_rot_nadir,14,Stripe rotation angle (in degrees),90
+icie,wfov_tbl_su_nadir,14,Stripe add-on + (to generate non-zero width),20
+icie,wfov_tbl_sd_nadir,14,Stripe add-on - (to generate non-zero width),20
+icie,wfov_tbl_az_rot_nadir,14,AZ rotation flag,0
+icie,wfov_tbl_xcenter_stripe_forward,14,Center pixel X coordinate with respect to FPA coordinate system,1015
+icie,wfov_tbl_ycenter_stripe_forward,14,Center pixel Y coordinate with respect to FPA coordinate system,949
+icie,wfov_tbl_fovr_forward,14,Radius of FOV to be populated with pixels,810
+icie,wfov_tbl_ydist_forward,14,Y distance of stripe from origin (FPA center),184
+icie,wfov_tbl_rot_forward,14,Stripe rotation angle (in degrees),90
+icie,wfov_tbl_su_forward,14,Stripe add-on + (to generate non-zero width),15
+icie,wfov_tbl_sd_forward,14,Stripe add-on - (to generate non-zero width),15
+icie,wfov_tbl_az_rot_forward,14,AZ rotation flag,0
+icie,wfov_tbl_xcenter_stripe_cross,14,Center pixel X coordinate with respect to FPA coordinate system,1015
+icie,wfov_tbl_ycenter_stripe_cross,14,Center pixel Y coordinate with respect to FPA coordinate system,949
+icie,wfov_tbl_fovr_cross,14,Radius of FOV to be populated with pixels,1000
+icie,wfov_tbl_ydist_cross,14,Y distance of stripe from origin (FPA center),0
+icie,wfov_tbl_rot_cross,14,Stripe rotation angle (in degrees),0
+icie,wfov_tbl_su_cross,14,Stripe add-on + (to generate non-zero width),20
+icie,wfov_tbl_sd_cross,14,Stripe add-on - (to generate non-zero width),20
+icie,wfov_tbl_az_rot_cross,14,AZ rotation flag,0
+icie,wfov_tbl_xcenter_stripe_raps,14,Center pixel X coordinate with respect to FPA coordinate system,1015
+icie,wfov_tbl_ycenter_stripe_raps,14,Center pixel Y coordinate with respect to FPA coordinate system,949
+icie,wfov_tbl_fovr_raps,14,Radius of FOV to be populated with pixels,1000
+icie,wfov_tbl_ydist_raps,14,Y distance of stripe from origin (FPA center),0
+icie,wfov_tbl_rot_raps,14,Stripe rotation angle (in degrees),90
+icie,wfov_tbl_su_raps,14,Stripe add-on + (to generate non-zero width),20
+icie,wfov_tbl_sd_raps,14,Stripe add-on - (to generate non-zero width),20
+icie,wfov_tbl_az_rot_raps,14,AZ rotation flag,2

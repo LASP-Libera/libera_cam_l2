@@ -1,0 +1,99 @@
+# Libera WFOV Camera L2 Data Product Definition
+# This file defines the metadata and structure for Libera WFOV Camera L2
+#
+# Modify the ProductID and version to match your specific data product
+# Update the variables section to match your science data outputs
+
+attributes:
+  # Data Product Identifier - change this to match your specific product
+  # See the Libera Level 2 Algorithm Developer Guide for full list of valid Data Product Identifiers
+  ProductID: CF-RAD
+
+  # Version number in M.m.p format (Major.minor.patch)
+  # Note that the major version corresponds to the DAAC collection number and the launch version will be Collection 1
+  algorithm_version: 0.2.0
+
+# Coordinate definitions
+# These link spatial and temporal concepts (ex: time, latitude, longitude, height, pressure) to array dimension axes
+# They will allow users to access data in variable arrays by specifying the relevant coordinate values,
+# rather than just array indices
+coordinates:
+  time:
+    dtype: datetime64[ns]
+    dimensions: ["n_samples"] # Optional, defaults to the name of the coordinate. Must exist in dimensions list
+    attributes:
+      long_name: "Time of sample collection"
+    encoding:
+      units: nanoseconds since 1958-01-01
+      calendar: standard
+      dtype: int64
+
+# Variable definitions for your science data product
+# Each variable must include: long_name, dimensions, units, valid_range, _FillValue, dtype
+# If, for example, the variable is unitless, leave out the units key
+variables:
+  cloud_fraction:
+    dtype: float64
+    dimensions: ["n_samples"]
+    attributes:
+      long_name: "Cloud fraction"
+      valid_range: [0, 1]
+      _FillValue: -9999.0
+
+  cloud_fraction_uncertainty:
+    dtype: float64
+    dimensions: ["n_samples"]
+    attributes:
+      long_name: "Uncertainty in cloud fraction"
+      valid_range: [0, 1]  # Adjust based on your expected uncertainty range
+      _FillValue: -9999.0
+
+  latitude:
+    dtype: float64
+    dimensions: ["n_samples"]
+    attributes:
+      long_name: "Geodetic latitude"
+      units: "degrees_north"
+      valid_range: [-90, 90]
+      _FillValue: -999.0
+
+  longitude:
+    dtype: float64
+    dimensions: ["n_samples"]
+    attributes:
+      long_name: "Geodetic longitude"
+      units: "degrees_east"
+      valid_range: [-180, 180]
+      _FillValue: -999.0
+
+  quality_flags:
+    dtype: int32
+    dimensions: ["n_samples"]
+    attributes:
+      long_name: "Data quality flags"
+      valid_range: [0, 255]  # 8-bit flags: 0=good, 1=questionable, 2=bad, etc.
+      _FillValue: -1
+
+# Notes for customization:
+#
+# 1. ProductID: Update this to match your specific data product identifier
+#    Check with your team for the correct naming convention
+#
+# 2. Variables: Add, remove, or modify variables to match your science outputs
+#    - Each variable name should match the keys in your processed_data dictionary
+#    - Dimensions currently use only "n_samples" for 1D time series data
+#    - For 2D/3D data, you can add dimensions like ["n_samples", "n_wavelengths"]
+#
+# 3. Units: Use CF-convention units where possible
+#    See: http://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html
+#
+# 4. Valid ranges: Set these based on your actual expected data ranges
+#    This helps with data validation and quality control
+#
+# 5. Missing values: Choose appropriate missing value indicators for each data type
+#    Use values that are clearly outside your valid_range
+#
+# 6. Data types: Common options include:
+#    - "float64" or "float32" for continuous measurements
+#    - "int32" or "int16" for integer data and flags
+#    - "datetime64[ns]" for timestamps
