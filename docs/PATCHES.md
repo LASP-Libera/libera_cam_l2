@@ -75,22 +75,25 @@ SHDOM's batch tooling constructs. Widened to `character(len=5000)` on
 Nucleus's vendored copy of this file but never upstreamed or documented
 before now.
 
-## 5. `h5py` floor loosened from `>=3.15.1` to `>=3.0` (`er3t`)
+## 5. `h5py`/`netcdf4` floors loosened to coexist with `libera-utils` (`er3t`)
 
-`er3t`'s `pyproject.toml` declared `h5py>=3.15.1`, introduced incidentally
-in the commit that migrated `er3t` from setuptools to `uv` -- er3t's
-actual h5py usage throughout the codebase is plain `h5py.File(...)` with
-dict-like dataset access, nothing requiring anything from 3.14/3.15. That
-floor made `er3t` impossible to install alongside `libera-utils` in the
-same environment: every published version of `libera-utils` depends on
-`lasp-curryer`, and every published version of `lasp-curryer` caps
-`h5py<3.14.0` -- so `>=3.15.1` and `<3.14.0` never overlap, regardless of
-which versions of either package are chosen. Loosened on `libera-l2-fixes`
-to `>=3.0` (still a real floor, just not an artificially high one) so the
-two can coexist. Until this lands on Hong's mainline, `libera_cam_l2`'s
-own `pyproject.toml` also carries a `[tool.uv] override-dependencies`
-entry for `h5py` as a belt-and-suspenders fix for anyone who hasn't yet
-picked up the `libera-l2-fixes` pin.
+`er3t`'s `pyproject.toml` declared `h5py>=3.15.1` and `netcdf4>=1.7.3`,
+both introduced incidentally in the commit that migrated `er3t` from
+setuptools to `uv` (checked: er3t's actual usage of both libraries is
+long-stable API -- plain `h5py.File(...)`, `netCDF4.Dataset(...)`,
+`set_auto_maskandscale()` -- nothing version-gated at either floor).
+Both floors made `er3t` impossible to install alongside `libera-utils`
+in the same environment: every published version of `libera-utils`
+depends on `lasp-curryer`, and every published version of `lasp-curryer`
+caps `h5py<3.14.0` and `netcdf4<1.7.3` -- so `er3t`'s floors and
+`lasp-curryer`'s ceilings never overlap, regardless of which versions of
+either package are chosen. Loosened on `libera-l2-fixes` to `h5py>=3.0`
+and `netcdf4>=1.6` (matching `lasp-curryer`'s own floors -- still real
+floors, just not artificially high ones) so the two can coexist. Until
+this lands on Hong's mainline, `libera_cam_l2`'s own `pyproject.toml`
+also carries `[tool.uv] override-dependencies` entries for both as a
+belt-and-suspenders fix for anyone who hasn't yet picked up the
+`libera-l2-fixes` pin.
 
 ## When to retire a patch / bump the pin
 

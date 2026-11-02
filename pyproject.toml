@@ -53,4 +53,4 @@ er3t = {path = "software/er3t", editable = true}
 # h5py<3.14.0 in every published version. Force a version in the
 # intersection until this is fixed properly upstream in er3t (see
 # docs/PATCHES.md, patch 5 -- not yet applied/pushed to Hong's repo).
-override-dependencies = ["h5py>=3.0,<3.14.0"]
+override-dependencies = ["h5py>=3.0,<3.14.0", "netcdf4>=1.6,<1.7.3"]
