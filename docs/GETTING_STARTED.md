@@ -225,33 +225,53 @@ plus the checksum cache, is why `l2/data/` is also gitignored.
 ocean-wind reanalysis, and (as a fallback only, overridden whenever
 `run_full_pipeline.py` auto-fetches or is given `--brdf-land`) a sample
 VJ143C1 land BRDF file. `input.yml` itself is tiny and **is** tracked in
-this repo (`data/sample/input.yml`), but the files it points at --
-`data/sample/{surface_mask,cam_l1b,brdf_parms}/` -- run to ~700 MB
-combined and are gitignored for the same reason DITL2 is.
+this repo (`data/sample/input.yml`); the files it points at are not, and
+are gitignored. These come from Hong Chen's own internal `l2_cam`
+project, which isn't published anywhere external -- **ask a team member
+(e.g. Sebastian) for copies**, don't go looking for a public source.
 
-Get these from Hong's `l2_cam` repo (`data/sample/` there has the same
-layout) and symlink the three subdirectories in, same pattern as DITL2:
+The exact files, by subdirectory (~700 MB combined):
+
+- `data/sample/surface_mask/` (~61 MB) -- **confirmed needed**
+  (`sfc.f_land` in `input.yml`, read directly, never overridden):
+  - `EASE2_M03km.LOCImask_land50_coast0km.11568x4872.bin`
+  - `NSIDC0772_LatLon_EASE2_M03km_v1.1.nc`
+- `data/sample/cam_l1b/` (~109 MB) -- **likely not needed** for the
+  real-tile pipeline (the real camera L1B is passed directly as a
+  function argument to `run_tile_rt.tile()`, not read from this
+  config's `cam.f_geo`/`cam.f_rad` -- unconfirmed, see TODO below):
+  - `cam_geo.h5`
+  - `cam_rad.h5`
+- `data/sample/brdf_parms/` (~537 MB) -- **likely not needed**:
+  `brdf.f_land` (the VJ143C1 file) is overridden by
+  `run_full_pipeline.py`'s real auto-fetched BRDF file before it's ever
+  read; `brdf.f_ocean` (the MERRA2 file) is slated to be dropped going
+  forward (see `docs/ROADMAP.md`):
+  - `MERRA2_400.inst1_2d_asm_Nx.20210518.nc4`
+  - `VJ143C1.A2021138.002.2024158071341.h5`
+
+Place them (copied or symlinked) at those exact paths, e.g.:
 
 ```bash
-ln -s /path/to/l2_cam/data/sample/surface_mask data/sample/surface_mask
-ln -s /path/to/l2_cam/data/sample/cam_l1b      data/sample/cam_l1b
-ln -s /path/to/l2_cam/data/sample/brdf_parms   data/sample/brdf_parms
+ln -s /path/to/your/copy/surface_mask data/sample/surface_mask
+ln -s /path/to/your/copy/cam_l1b      data/sample/cam_l1b
+ln -s /path/to/your/copy/brdf_parms   data/sample/brdf_parms
 ```
 
+If you'd rather not chase down all ~700 MB up front: `surface_mask/` is
+the only one confirmed required, so you can start with just that
+symlink and see whether `run_full_pipeline.py` still completes without
+`cam_l1b/`/`brdf_parms/` in place -- that would also settle the TODO
+below one way or the other.
+
 **TODO (Sebastian, 2026-11-03):** of these three, only `surface_mask/`
-(~63 MB: a NSIDC EASE-Grid 2.0 land/coast mask + its lat/lon
-georeference grid, likely NSIDC-0772 or a close relative -- exact
-dataset ID/URL still to be confirmed) is actually fixed, standard,
-orbit-independent reference data -- unlike DITL2, it never changes
-between runs. For now it's distributed the same manual way as DITL2
-(ask a team member, symlink it in), but since it's static and public,
-it's a good candidate for its own small fetch-on-install step later
-(same spirit as `software/er3t/install.sh`'s public-data download),
-rather than something every new user has to be handed by hand.
-`cam_l1b/` and `brdf_parms/` are likely unneeded for the real-tile
-pipeline (see the `--brdf-land` override and the real-`cam_l1b`-passed-
-directly points raised in chat) and may be droppable once that's
-confirmed.
+is actually fixed, standard, orbit-independent reference data (a NSIDC
+EASE-Grid 2.0 land/coast mask + its lat/lon georeference grid, likely
+NSIDC-0772 or a close relative -- exact dataset ID/URL still to be
+confirmed) -- unlike DITL2, it never changes between runs, so it's a
+good candidate for its own small fetch-on-install step later (same
+spirit as `software/er3t/install.sh`'s public-data download), rather
+than something every new user has to be handed by hand.
 
 ### 5c. The `grain` leap-second library
 

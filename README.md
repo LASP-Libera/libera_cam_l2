@@ -5,17 +5,15 @@ consolidated from `libera-cam-proxy`'s L2 development work and Hong
 Chen's `cam_l2` package.
 
 **Architecture, in one paragraph:** `er3t` and `shdom` are pulled in as
-pinned, *unmodified* dependencies straight from Hong Chen's own public
-GitHub repos (`software/er3t`, `software/shdom` -- git submodules, pinned
-to `release/v0.2.0-alpha.1`), not vendored/hand-edited copies. Three
-small fixes this project needs on top of them live entirely in
-`l2/er3t_compat.py` as runtime overrides, applied once at import time
--- `software/er3t` itself is never modified. See `docs/PATCHES.md` for
-exactly what those three fixes are and why. `src/cam_l2` is Hong's own
-Libera-specific processing code (cloud detection, BRDF, etc.), forked
-in directly since it isn't published anywhere outside LASP's internal
-Nucleus server. `libcam/` is the camera geometry / pixel-mask support
-library, forked in from `libera-cam-proxy`.
+git submodules pinned to Hong Chen's own public GitHub repos
+(`software/er3t`, `software/shdom`), on his `libera-l2-fixes` branches
+(each branched off `release/v0.2.0-alpha.1`) -- real, direct commits on
+Hong's own repos, not a vendored/hand-patched copy and not a runtime
+override layer in this project. See `docs/PATCHES.md` for exactly what
+those fixes are, why, and when each can be retired. `src/cam_l2` is
+Hong's own Libera-specific processing code (cloud detection, BRDF,
+etc.), forked in directly. `libcam/` is the camera geometry /
+pixel-mask support library, forked in from `libera-cam-proxy`.
 
 Getting started: see `docs/GETTING_STARTED.md`.
 
