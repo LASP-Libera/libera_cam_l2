@@ -5,3 +5,10 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
+
+# External, machine-local real data (never distributed via this repo --
+# see docs/GETTING_STARTED.md for where new users get these and how to
+# point the repo at them).
+data/DITL2
+data/DITL2/
+apps/
