@@ -227,8 +227,12 @@ ocean-wind reanalysis, and (as a fallback only, overridden whenever
 VJ143C1 land BRDF file. `input.yml` itself is tiny and **is** tracked in
 this repo (`data/sample/input.yml`); the files it points at are not, and
 are gitignored. These come from Hong Chen's own internal `l2_cam`
-project, which isn't published anywhere external -- **ask a team member
-(e.g. Sebastian) for copies**, don't go looking for a public source.
+project, which isn't published anywhere external -- **for now, request
+them from a team member (e.g. Sebastian)**, don't go looking for a
+public source. That's expected to change for `surface_mask/` at least:
+it's standard public reference data (see the TODO below), and the plan
+is for it to become directly downloadable on its own -- no team member
+needed -- once that fetch step exists. Until then, ask.
 
 The exact files, by subdirectory (~700 MB combined):
 
