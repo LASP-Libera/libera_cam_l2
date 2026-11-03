@@ -51,5 +51,3 @@ VZA_LIMIT = 63.0                 # degrees — pixels beyond this are masked
 # ── Digitisation ─────────────────────────────────────────────────────────────
 NBIT = 12                        # ADC resolution
 
-# ── Data directory (package-relative, for calibration tables) ─────────────────
-FDIR_DATA = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data')
