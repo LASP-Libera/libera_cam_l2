@@ -95,9 +95,25 @@ also carries `[tool.uv] override-dependencies` entries for both as a
 belt-and-suspenders fix for anyone who hasn't yet picked up the
 `libera-l2-fixes` pin.
 
+## 6. `install.sh` missing a shebang (`er3t`)
+
+`software/er3t/install.sh` (fetches er3t's public reference data --
+solar spectra, absorption coefficients, phase functions, standard
+atmosphere profiles including `afglus.dat`, from a public Google Drive
+link via `gdown`) had no `#!` line. Harmless under bash/zsh (which fall
+back to `/bin/sh` for a shebang-less script), but a real footgun under
+tcsh: tcsh's own heuristic for a shebang-less script is to run it as
+*csh*, not sh, whenever the first character is `#` -- which this file's
+first line (`# pack data`) is. The result when Sebastian ran
+`./install.sh` from tcsh was a confusing `usage: conda ...` / `Invalid
+null command` error with nothing to do with the actual data-fetch
+logic. Fixed by adding `#!/usr/bin/env bash` as the first line, so
+`./install.sh` behaves the same regardless of the caller's interactive
+shell (`bash install.sh` also always works, shebang or not).
+
 ## When to retire a patch / bump the pin
 
 If Hong merges one of these into his own mainline, check whether the pin
-can move past it; once all four are merged upstream, `software/er3t` and
-`software/shdom` can be re-pinned to his regular release branch/tag and
-this file can be deleted.
+can move past it; once all patches above are merged upstream,
+`software/er3t` and `software/shdom` can be re-pinned to his regular
+release branch/tag and this file can be deleted.

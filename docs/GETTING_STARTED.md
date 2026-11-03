@@ -123,6 +123,34 @@ python -c "import er3t; import cam_l2; import pyhdf; print('er3t + cam_l2 + pyhd
 which shdom || echo "put software/shdom/build/bin on PATH, or set SHDOM_EXE"
 ```
 
+### 3c. Fetch `er3t`'s reference data
+
+`er3t` ships its own data installer for a public reference-data bundle
+it needs at runtime (solar spectra, absorption coefficients, phase
+functions, standard atmosphere profiles) -- none of this is Libera- or
+LASP-specific, and none of it is in this repo. Without it, any real RT
+step (e.g. `rt_shdom()` in `run_tile_rt.py`) fails looking for a file
+like `software/er3t/er3t/data/atmmod/afglus.dat`.
+
+```bash
+cd software/er3t
+./install.sh        # needs gdown, already installed into .venv by step 3b
+cd ../..
+```
+
+Downloads a tarball from a public Google Drive link and extracts it
+into `software/er3t/er3t/data/` -- expect this to take a while (no
+published size; budget for it being large, same spirit as the DITL2
+camera L1B above).
+
+`./install.sh` works the same from any shell as of
+`libera-l2-fixes` -- earlier versions had no `#!` line, which tcsh in
+particular mis-handled (treated it as a csh script instead of running
+it with bash, since tcsh's shebang-less-script heuristic keys off the
+first character being `#`). If you ever see a stray `usage: conda ...`
+/ `Invalid null command` error instead of the expected gdown/tar
+output, run `bash install.sh` explicitly instead of `./install.sh`.
+
 ## 4. Earthdata token
 
 Only needed if you'll use `--proxy-date` or let BRDF auto-fetch
