@@ -238,6 +238,21 @@ ln -s /path/to/l2_cam/data/sample/cam_l1b      data/sample/cam_l1b
 ln -s /path/to/l2_cam/data/sample/brdf_parms   data/sample/brdf_parms
 ```
 
+**TODO (Sebastian, 2026-11-03):** of these three, only `surface_mask/`
+(~63 MB: a NSIDC EASE-Grid 2.0 land/coast mask + its lat/lon
+georeference grid, likely NSIDC-0772 or a close relative -- exact
+dataset ID/URL still to be confirmed) is actually fixed, standard,
+orbit-independent reference data -- unlike DITL2, it never changes
+between runs. For now it's distributed the same manual way as DITL2
+(ask a team member, symlink it in), but since it's static and public,
+it's a good candidate for its own small fetch-on-install step later
+(same spirit as `software/er3t/install.sh`'s public-data download),
+rather than something every new user has to be handed by hand.
+`cam_l1b/` and `brdf_parms/` are likely unneeded for the real-tile
+pipeline (see the `--brdf-land` override and the real-`cam_l1b`-passed-
+directly points raised in chat) and may be droppable once that's
+confirmed.
+
 ### 5c. The `grain` leap-second library
 
 `libcam.util.util.jpss_tai_to_utc()` (TAI->UTC conversion for obs-ID
