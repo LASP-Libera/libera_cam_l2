@@ -12,3 +12,15 @@ venv/
 data/DITL2
 data/DITL2/
 apps/
+
+# cam_l2's own sample/reference data (surface mask, BRDF climatology,
+# demo camera L1B) -- external, large (~700MB combined), never
+# distributed via this repo. data/sample/input.yml itself IS tracked
+# (tiny config); see docs/GETTING_STARTED.md for where new users get
+# the data it references.
+data/sample/surface_mask
+data/sample/surface_mask/
+data/sample/cam_l1b
+data/sample/cam_l1b/
+data/sample/brdf_parms
+data/sample/brdf_parms/

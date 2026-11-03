@@ -143,7 +143,9 @@ setenv EARTHDATA_TOKEN "your-token-here"
 Get a token at
 https://ladsweb.modaps.eosdis.nasa.gov/learn/download-files-using-laads-daac-tokens
 
-## 5. Real mission data
+## 5. External data (not in this repository)
+
+### 5a. Real mission data (DITL2)
 
 Not in this repository, by design -- the real camera/radiometer L1B and
 ERA5 reanalysis files for this orbit run into the tens of GB (the camera
@@ -187,6 +189,42 @@ The resulting `LIBERA_INPUT_MANIFEST_*.json` (written under
 `apps/l2/data/` by default) records each file's **absolute path on your
 machine**, so it's inherently per-machine, non-shareable output -- that,
 plus the checksum cache, is why `apps/` is also gitignored.
+
+### 5b. cam_l2 reference data (surface mask, BRDF climatology)
+
+`run_tile_rt.tile()` reads a few things through `cam_l2`'s own
+`data/sample/input.yml` -- the EASE2 land/coast surface mask, MERRA2
+ocean-wind reanalysis, and (as a fallback only, overridden whenever
+`run_full_pipeline.py` auto-fetches or is given `--brdf-land`) a sample
+VJ143C1 land BRDF file. `input.yml` itself is tiny and **is** tracked in
+this repo (`data/sample/input.yml`), but the files it points at --
+`data/sample/{surface_mask,cam_l1b,brdf_parms}/` -- run to ~700 MB
+combined and are gitignored for the same reason DITL2 is.
+
+Get these from Hong's `l2_cam` repo (`data/sample/` there has the same
+layout) and symlink the three subdirectories in, same pattern as DITL2:
+
+```bash
+ln -s /path/to/l2_cam/data/sample/surface_mask data/sample/surface_mask
+ln -s /path/to/l2_cam/data/sample/cam_l1b      data/sample/cam_l1b
+ln -s /path/to/l2_cam/data/sample/brdf_parms   data/sample/brdf_parms
+```
+
+### 5c. The `grain` leap-second library
+
+`libcam.util.util.jpss_tai_to_utc()` (TAI->UTC conversion for obs-ID
+logs and FITS housekeeping -- not yet exercised by this repo's own
+pipeline, but needed once obs-ID checking is ported in) uses the
+`grain` library for a precise, leap-second-aware conversion, falling
+back to a flat 37-second offset (correct from 2017 onward, i.e. today)
+if `grain` isn't importable. Unlike DITL2/cam_l2 data, `grain.py` and
+`leap-seconds.list` are tiny (under 15 KB combined) and **are** vendored
+as real committed copies at `py/grain.py` and `py/leap-seconds.list` --
+so, unlike everything else in this section, there's nothing a new user
+needs to do here; it's already self-contained. (If `grain`'s canonical
+source in the `camera` project is ever updated -- e.g. a new leap
+second -- that copy needs a manual re-sync; it won't happen
+automatically.)
 
 ## 6. Run the pipeline
 

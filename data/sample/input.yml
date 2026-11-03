@@ -1,0 +1,47 @@
+# This is a YAML configuration file for Libera WFOV Camera L2 products
+
+input:
+  cam:
+    f_geo:
+      fname: sample/cam_l1b/cam_geo.h5
+      var_utc: All_Data/VIIRS-MOD-UNAGG-GEO_All/MidTime
+      var_lon: All_Data/VIIRS-MOD-UNAGG-GEO_All/Longitude
+      var_lat: All_Data/VIIRS-MOD-UNAGG-GEO_All/Latitude
+      var_sza: All_Data/VIIRS-MOD-UNAGG-GEO_All/SolarZenithAngle
+      var_saa: All_Data/VIIRS-MOD-UNAGG-GEO_All/SolarAzimuthAngle
+      var_vza: All_Data/VIIRS-MOD-UNAGG-GEO_All/SatelliteZenithAngle
+      var_vaa: All_Data/VIIRS-MOD-UNAGG-GEO_All/SatelliteAzimuthAngle
+
+    f_rad:
+      fname: sample/cam_l1b/cam_rad.h5
+      var_rad: All_Data/VIIRS-DualGain-Cal-IP_All/radiance_3
+
+  sfc:
+    f_land:
+      fname_bin: sample/surface_mask/EASE2_M03km.LOCImask_land50_coast0km.11568x4872.bin
+
+      fname_geo: sample/surface_mask/NSIDC0772_LatLon_EASE2_M03km_v1.1.nc
+      var_lon: longitude
+      var_lat: latitude
+
+  brdf:
+    f_ocean:
+      fname: sample/brdf_parms/MERRA2_400.inst1_2d_asm_Nx.20210518.nc4
+      var_utc: time
+      var_lon: lon
+      var_lat: lat
+      var_u10: U10M
+      var_v10: V10M
+
+    f_land:
+      fname: sample/brdf_parms/VJ143C1.A2021138.002.2024158071341.h5
+      var_lon: HDFEOS/GRIDS/VIIRS_CMG_BRDF/Data Fields/lon
+      var_lat: HDFEOS/GRIDS/VIIRS_CMG_BRDF/Data Fields/lat
+      var_fiso: HDFEOS/GRIDS/VIIRS_CMG_BRDF/Data Fields/BRDF_Albedo_Parameter1_M4
+      var_fvol: HDFEOS/GRIDS/VIIRS_CMG_BRDF/Data Fields/BRDF_Albedo_Parameter2_M4
+      var_fgeo: HDFEOS/GRIDS/VIIRS_CMG_BRDF/Data Fields/BRDF_Albedo_Parameter3_M4
+      fill_value: 32767
+
+output:
+  f_cld_msk:
+    fname: libera-cam-l2_cld-msk.h5
