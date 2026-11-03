@@ -284,7 +284,43 @@ scripts use it to locate `software/er3t`, `software/shdom`, and
 normally never need to pass it -- only override it if you've moved
 things around.
 
-## 7. Docker
+## 7. (Optional) Pick a different tile
+
+`tile_pick.yml` (tracked in this repo) already has a hand-picked
+100x100km tile for the 2024-07-12 DITL2 orbit -- the one
+`run_full_pipeline.py --proxy-date 2024-07-12` uses by default. You
+only need this section if you want to pick a *different* tile.
+
+`l2/pick_tile_overview.py` is an interactive orbit quicklook: it loads
+the RAD-4CH radiometer track and ERA5 windspeed for one orbit, reduces
+it to one near-nadir point per ~5.5 s scan cycle, and shows three
+Orthographic map views plus SZA/Latitude/windspeed panels, color-coded
+by land/ocean. Click any panel (a map, or one of the three bottom
+time-series plots) to pick a tile -- the figure closes itself right
+after the click, and the pick is written out as yml.
+
+**Needs a real display and an interactive matplotlib backend -- run it
+on your own machine (not a plain SSH session), and do not set
+`matplotlib.use('Agg')`.**
+
+```bash
+python l2/pick_tile_overview.py
+```
+
+With no arguments it defaults to this repo's own DITL2 files and
+surface mask (same convention `build_input_manifest.py` uses), so once
+section 5's external data is symlinked in, it should just work. To try
+it without overwriting the real `tile_pick.yml`:
+
+```bash
+python l2/pick_tile_overview.py --out-yml /tmp/tile_pick_test.yml
+```
+
+See `python l2/pick_tile_overview.py --help` for the rest of the flags
+(`--bin-seconds`, `--no-land-ocean` if you don't have the surface mask
+symlinked in, `--rad-l1b`/`--era5` to point at a different orbit).
+
+## 8. Docker
 
 ```bash
 docker build -t libera_cam_l2 .
