@@ -269,13 +269,32 @@ symlink and see whether `run_full_pipeline.py` still completes without
 below one way or the other.
 
 **TODO (Sebastian, 2026-11-03):** of these three, only `surface_mask/`
-is actually fixed, standard, orbit-independent reference data (a NSIDC
-EASE-Grid 2.0 land/coast mask + its lat/lon georeference grid, likely
-NSIDC-0772 or a close relative -- exact dataset ID/URL still to be
-confirmed) -- unlike DITL2, it never changes between runs, so it's a
-good candidate for its own small fetch-on-install step later (same
-spirit as `software/er3t/install.sh`'s public-data download), rather
-than something every new user has to be handed by hand.
+is actually fixed, standard, orbit-independent reference data -- unlike
+DITL2, it never changes between runs, so it's a good candidate for its
+own small fetch-on-install step later (same spirit as
+`software/er3t/install.sh`'s public-data download), rather than
+something every new user has to be handed by hand. Status of the two
+files in it, checked 2026-11-03:
+
+- `NSIDC0772_LatLon_EASE2_M03km_v1.1.nc` (the lat/lon georeference
+  grid) is confirmed: this is NSIDC-0772, "EASE Grids Ancillary Grid
+  Information," NetCDF format --
+  <https://nsidc.org/data/nsidc-0772>.
+- `EASE2_M03km.LOCImask_land50_coast0km.11568x4872.bin` (the actual
+  land/coast mask) is **not** confirmed -- it is not part of NSIDC-0772
+  itself (that dataset is lat/lon only, checked directly), and no
+  public dataset ID or direct download URL for this specific mask file
+  has been verified. Leads not yet run down: NSIDC's EASE-Grid
+  geolocation-tools page and its linked "Ancillary Data for EASE/EASE
+  2.0 Grids" PDF may document it even though the tools page itself
+  doesn't surface it; <https://github.com/nsidc/mapxmaps> has the grid
+  geometry definition (`EASE2_M03km.gpd` -- confirms the 11568x4872,
+  ~3002.685 m cylindrical-equal-area cell geometry baked into this
+  file's name) but no mask data itself. Don't trust a found-looking
+  download recipe for this file without actually confirming it -- a
+  generic one checked during this same investigation (routing through
+  SMAP/NSIDC-0738 or `earthaccess`) didn't hold up under a direct check
+  of the pages it cited.
 
 ### 5c. The `grain` leap-second library
 
