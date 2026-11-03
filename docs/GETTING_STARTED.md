@@ -79,6 +79,26 @@ then point `INCLUDE_DIRS`/`LIBRARY_DIRS` at `~/.conda-envs/hdf4-libs/{include,li
 the same way as above. (Homebrew no longer packages `hdf4` as of
 2026, so `brew install hdf4` will not work.)
 
+**This also needs a runtime fix, every time, not just at build time.**
+`pyhdf`'s compiled extension looks up `libmfhdf.0.dylib` via `@rpath`
+on macOS, and the default fallback search does not include wherever
+HDF4 actually lives -- so `import pyhdf` (or anything importing it,
+like `er3t`) fails with `Library not loaded: @rpath/libmfhdf.0.dylib`
+unless the linker is told where to look, in every shell, not only
+during `uv sync`. Put this in your shell rc file (`~/.cshrc` for
+csh/tcsh), using the same `<env-path>` as above:
+
+```tcsh
+setenv DYLD_FALLBACK_LIBRARY_PATH "<env-path>/lib"
+```
+```bash
+export DYLD_FALLBACK_LIBRARY_PATH="<env-path>/lib"
+```
+
+(On Linux, the equivalent is `LD_LIBRARY_PATH` rather than
+`DYLD_FALLBACK_LIBRARY_PATH` -- not yet verified against this repo's
+own environment, since development so far has been on macOS.)
+
 ### 3b. Build the environment
 
 ```bash
