@@ -19,6 +19,7 @@ classifiers = [
     ]
 dependencies = [
     "er3t",
+    "libcam",
     "cartopy",
     "h5py",
     "matplotlib",
@@ -44,6 +45,7 @@ Homepage = "https://github.com/LASP-Libera/libera_cam_l2"
 
 [tool.uv.sources]
 er3t = {path = "software/er3t", editable = true}
+libcam = {path = "libcam", editable = true}
 
 [tool.uv]
 # er3t==0.2.0 declares h5py>=3.15.1 (an unintentional artifact of its

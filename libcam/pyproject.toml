@@ -1,0 +1,21 @@
+[build-system]
+requires = ["uv_build >= 0.1.0, < 1.0.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "libcam"
+module-root = "."
+
+[project]
+name = "libcam"
+version = "0.1.0"
+description = "Libera WFOV camera support library (masking, geometry, imagery utilities) -- ported from libera-cam-proxy"
+requires-python = ">=3.12"
+authors = [
+    {name = "Sebastian Schmidt", email = "sebastian.schmidt@lasp.colorado.edu"},
+    ]
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "cartopy",
+    ]
