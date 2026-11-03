@@ -145,9 +145,48 @@ https://ladsweb.modaps.eosdis.nasa.gov/learn/download-files-using-laads-daac-tok
 
 ## 5. Real mission data
 
-Not in this repository (`data/` beyond the small samples under
-`data/l2_cam_sample/` is gitignored -- real L1B/MODIS/BRDF data runs
-into the tens of GB). Get it from the team.
+Not in this repository, by design -- the real camera/radiometer L1B and
+ERA5 reanalysis files for this orbit run into the tens of GB (the camera
+L1B alone is ~90 GB), so they're never pushed to git. `data/DITL2/` is
+gitignored for exactly this reason (the small synthetic fixtures under
+`data/l2_cam_sample/` are unaffected and stay tracked).
+
+`build_input_manifest.py` (and therefore `run_full_pipeline.py`, which
+calls it when no `--input-manifest` is given) looks for three files at
+fixed default paths:
+
+```
+data/DITL2/L1B/LIBERA_L1B_CAM_V0-3-2_20260712T001717_20260712T040151_R26281034503.nc
+data/DITL2/L1B/LIBERA_L1B_RAD-4CH_V0-7-0_20260712T001238_20260712T040726_R26281034503.nc
+data/DITL2/ERA5/39cfa975852f21f218547a3706f8c128.nc
+```
+
+Get the team's copy of these (ask Sebastian or whoever ran this DITL2
+orbit -- not distributed via this repo), then either:
+
+- **symlink them in** (recommended -- avoids a second ~90 GB copy on
+  disk):
+  ```bash
+  ln -s /path/to/your/DITL2 data/DITL2
+  ```
+- place real copies at those same paths instead, or
+- pass `--cam-l1b`/`--rad-l1b`/`--era5` explicitly to
+  `build_input_manifest.py` (or to `run_full_pipeline.py`, which
+  forwards any flag it doesn't itself define) to point at wherever you
+  actually keep them.
+
+The first run that needs a manifest computes an MD5 of each file to
+validate it -- expect the ~90 GB camera L1B to take a while the first
+time (chunked/streamed, so it won't blow up your RAM, but it still has
+to read all 90 GB off disk). Reruns reuse a cached checksum (keyed on
+each file's path/size/mtime) from `apps/l2/data/.checksum_cache.json`
+and are near-instant; delete that file, or pass `--no-checksum-cache`,
+to force a fresh hash.
+
+The resulting `LIBERA_INPUT_MANIFEST_*.json` (written under
+`apps/l2/data/` by default) records each file's **absolute path on your
+machine**, so it's inherently per-machine, non-shareable output -- that,
+plus the checksum cache, is why `apps/` is also gitignored.
 
 ## 6. Run the pipeline
 
