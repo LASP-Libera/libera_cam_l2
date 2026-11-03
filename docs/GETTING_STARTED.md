@@ -216,7 +216,7 @@ to force a fresh hash.
 The resulting `LIBERA_INPUT_MANIFEST_*.json` (written under
 `l2/data/` by default) records each file's **absolute path on your
 machine**, so it's inherently per-machine, non-shareable output -- that,
-plus the checksum cache, is why `apps/` is also gitignored.
+plus the checksum cache, is why `l2/data/` is also gitignored.
 
 ### 5b. cam_l2 reference data (surface mask, BRDF climatology)
 
