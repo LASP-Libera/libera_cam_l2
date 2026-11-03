@@ -471,7 +471,7 @@ def write_cf_cam_netcdf(arrays, n, nc_path, wavelength_nm=555.0,
         if padded:
             ds.summary = (
                 "DEV-STAGE PLACEHOLDER OUTPUT -- single-tile RT-proxy "
-                "pipeline (apps/l2/run_dev_step1.py), padded (item D, "
+                "pipeline (l2/run_dev_step1.py), padded (item D, "
                 "2026-10-23) to the full RAD-4CH orbit's record count: "
                 "Latitude/Longitude/Altitude/Solar_Zenith_Surface/"
                 "Viewing_Zenith_Surface/Relative_Azimuth_Surface/"
@@ -488,11 +488,11 @@ def write_cf_cam_netcdf(arrays, n, nc_path, wavelength_nm=555.0,
         else:
             ds.summary = (
                 "DEV-STAGE PLACEHOLDER OUTPUT -- single-tile RT-proxy "
-                "pipeline (apps/l2/run_dev_step1.py), 'inside' radiometer "
+                "pipeline (l2/run_dev_step1.py), 'inside' radiometer "
                 "footprints only (no multi-tile stitching). NOT for science "
                 "use. See docs/L1B_TO_L2_ROADMAP.md.")
         ds.cf_cam_full_orbit_padded = "true" if padded else "false"
-        ds.history = ("Created %s by apps/l2/write_cf_cam_output.py"
+        ds.history = ("Created %s by l2/write_cf_cam_output.py"
                       % datetime.datetime.now(datetime.timezone.utc).isoformat())
         if tile_provenance:
             for k, v in tile_provenance.items():

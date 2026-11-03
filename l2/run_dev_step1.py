@@ -3,7 +3,7 @@
 
 The first real end-to-end run of the plan agreed 2026-10-20: read the
 three manifest files (camera L1B, radiometer L1B, ERA5), match the
-hand-picked tile (apps/l2/tile_pick.yml, from pick_tile_overview.py) to a
+hand-picked tile (l2/tile_pick.yml, from pick_tile_overview.py) to a
 camera-frame window, run the existing validated chop()/tile()/rt_shdom()
 chain (run_tile_rt.py) on ONE 100 km tile, and report the dev-step-1
 `cam_radiance_footprint` (footprint-averaged clear-sky RT at 555 nm,
@@ -51,9 +51,9 @@ import run_tile_rt  # noqa: E402
 # clone works out of the box with no manual --l2-cam-root. Override it
 # only if you've relocated cam_l2/software/er3t/software/shdom elsewhere.
 DEFAULT_L2_CAM_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFAULT_MANIFEST_DIR = "apps/l2/data"
+DEFAULT_MANIFEST_DIR = "l2/data"
 DEFAULT_TILE_PICK = "tile_pick.yml"
-DEFAULT_OUT = "apps/l2/data/dev_step1_result.yml"
+DEFAULT_OUT = "l2/data/dev_step1_result.yml"
 
 
 def latest_manifest(manifest_dir):
@@ -206,7 +206,7 @@ def main():
                         "radiance footprint average by default (item C, "
                         "2026-10-23) -- see --cam-cloud-fraction to force "
                         "the old zero/random placeholder instead. See "
-                        "apps/l2/write_cf_cam_output.py.")
+                        "l2/write_cf_cam_output.py.")
     p.add_argument("--l2-output-dir", default="output_l2",
                    help="Directory for --write-l2-output's NetCDF + output "
                         "manifest (default: %(default)s).")
@@ -334,7 +334,7 @@ def main():
     # with near-zero atmosphere).
     #
     # IMPORTANT: this reuses Ncpu=args.ncpu (same as the main run above),
-    # NOT Ncpu=1. The pre-existing apps/l2/rt_shdom_vacuum_test.py script
+    # NOT Ncpu=1. The pre-existing l2/rt_shdom_vacuum_test.py script
     # recommends Ncpu=1 for this kind of thin/degenerate-atmosphere test,
     # because a single near-zero-depth atm_levels point previously crashed
     # SHDOM's MPI domain decomposition under Ncpu=4. But this session's own
@@ -421,7 +421,7 @@ def main():
                         "run_tile_rt.bin_measured_radiance_to_grid(). Both "
                         "in the SAME native units (W m^-2 sr^-1 nm^-1): "
                         "the camera-nm unit conversion already happened "
-                        "once, at apps/l2/build_l1x.py write time, so no "
+                        "once, at l2/build_l1x.py write time, so no "
                         "further conversion is needed here. A real-scene "
                         "comparison, not yet a validated algorithm metric "
                         "-- rad is clear-SKY only (cam_cloud_fraction=0 "

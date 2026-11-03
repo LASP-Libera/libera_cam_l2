@@ -209,12 +209,12 @@ The first run that needs a manifest computes an MD5 of each file to
 validate it -- expect the ~90 GB camera L1B to take a while the first
 time (chunked/streamed, so it won't blow up your RAM, but it still has
 to read all 90 GB off disk). Reruns reuse a cached checksum (keyed on
-each file's path/size/mtime) from `apps/l2/data/.checksum_cache.json`
+each file's path/size/mtime) from `l2/data/.checksum_cache.json`
 and are near-instant; delete that file, or pass `--no-checksum-cache`,
 to force a fresh hash.
 
 The resulting `LIBERA_INPUT_MANIFEST_*.json` (written under
-`apps/l2/data/` by default) records each file's **absolute path on your
+`l2/data/` by default) records each file's **absolute path on your
 machine**, so it's inherently per-machine, non-shareable output -- that,
 plus the checksum cache, is why `apps/` is also gitignored.
 

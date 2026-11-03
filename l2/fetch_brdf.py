@@ -1,5 +1,5 @@
 """
-apps/l2/fetch_brdf.py
+l2/fetch_brdf.py
 
 Dev-step-2 BRDF-date-matching follow-up (Sebastian, 2026-10-22): the
 land BRDF input every dev-step-1/2 run has used so far
@@ -25,7 +25,7 @@ for every --proxy-date run whose date is on/after VIIRS/JPSS-1's
 2017-11-18 launch (run_full_pipeline.py checks the date itself before
 calling in -- this module doesn't need to know about that cutoff) --
 no more need to manually find/pass --brdf-land by hand for the normal
-case. It checks apps/l2/data/brdf_test/ for an already-downloaded file
+case. It checks l2/data/brdf_test/ for an already-downloaded file
 for that exact calendar date FIRST (a plain filename glob, no network
 call at all) before ever querying CMR, so a repeat run for a date
 already fetched costs nothing extra -- same "don't re-download what's
@@ -71,7 +71,7 @@ grid) -- this is a single whole-Earth file, not a small regional crop.
 
 Usage
 -----
-    python apps/l2/fetch_brdf.py --date 2020-07-12
+    python l2/fetch_brdf.py --date 2020-07-12
 """
 import argparse
 import datetime
@@ -89,7 +89,7 @@ if _THIS_DIR not in sys.path:
 # clone works out of the box with no manual --l2-cam-root. Override it
 # only if you've relocated cam_l2/software/er3t/software/shdom elsewhere.
 DEFAULT_L2_CAM_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFAULT_OUT_DIR = "apps/l2/data/brdf_test"
+DEFAULT_OUT_DIR = "l2/data/brdf_test"
 DEFAULT_SHORT_NAME = "VJ143C1"
 DEFAULT_VERSION = "002"
 CMR_GRANULES_URL = "https://cmr.earthdata.nasa.gov/search/granules.json"

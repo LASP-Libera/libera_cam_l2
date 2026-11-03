@@ -1,8 +1,8 @@
 """
-apps/l2/proxy_radiance.py
+l2/proxy_radiance.py
 
 Dev-step-2, stage 2 of the "L1X" proxy-radiance plan: project a cropped
-MODIS/VIIRS scene (apps/l2/inspect_proxy_scene.py) onto the REAL per-
+MODIS/VIIRS scene (l2/inspect_proxy_scene.py) onto the REAL per-
 pixel geolocation of REAL camera frames (not the synthetic libcam.camera
 Platform model gcp_proxy.py validates against), using the same
 ellipsoidal-Gaussian PSF (Platform.mod2cam(sampling="psf")) that proxy
@@ -13,7 +13,7 @@ PSF -- is computed purely from Platform.cam_lon/cam_lat via finite
 differences; it only falls back to the synthetic geomap() if those are
 still None. So we build a bare Platform(), overwrite .cam_lon/.cam_lat
 with one real camera frame's real geolocation (from the actual CAM L1B
-granule, via apps/l2/elevation_sweep_timing.py's open_granule() -- same
+granule, via l2/elevation_sweep_timing.py's open_granule() -- same
 reader run_tile_rt.py's chop()/tile() use), and mod2cam() projects onto
 real pixel positions with real-geometry PSF sizing, no synthetic model
 involved. mod2cam() works on ONE frame at a time (output shape is the
@@ -35,7 +35,7 @@ single-frame test). But in this ("Cross-Track") observing mode the
 camera does not actually expose that whole grid every frame -- only a
 sparse, precessing pattern of pixels is read out (named "nadir" /
 "forward" / "cross" stripe components, plus an ADM ring pattern), which
-is exactly what apps/l2/elevation_sweep_timing.py's pool_stripe_pixels()
+is exactly what l2/elevation_sweep_timing.py's pool_stripe_pixels()
 already decodes per frame via libcam.mask.retrieve_mask.MaskRetriever
 and the granule's own pixel-mask field (MASK_FIELDS). Using raw
 isfinite(lat/lon) as "this pixel was measured this frame" (what this
@@ -50,7 +50,7 @@ consecutive stripes that a real camera image shows and the old full-FPA
 version washed out.
 
 The MODIS/VIIRS source crop is also tightened to the tile's own bounding
-box before projection: ModisL1B.crop() (apps/l2/inspect_proxy_scene.py)
+box before projection: ModisL1B.crop() (l2/inspect_proxy_scene.py)
 keeps full scanlines -- the entire cross-track swath width -- for any
 row with >=1 pixel inside the requested box, so its raw output can span
 far more longitude than the tile itself (confirmed: ~40 deg of longitude
@@ -68,11 +68,11 @@ actual "L1X" file the L2 algorithm will read in place of L1B.
 Usage
 -----
     # loop over every frame in the tile's time window (default)
-    python apps/l2/proxy_radiance.py
+    python l2/proxy_radiance.py
 
     # original single-frame proof of mechanism (closest-in-time frame
     # only), for comparison/debugging
-    python apps/l2/proxy_radiance.py --single-frame
+    python l2/proxy_radiance.py --single-frame
 """
 import argparse
 import os
@@ -94,18 +94,18 @@ import inspect_proxy_scene as ips          # noqa: E402  (MODIS crop, tile_pick 
 
 DEFAULT_CAM_L1B = "data/DITL2/L1B/LIBERA_L1B_CAM_V0-3-2_20260712T001717_20260712T040151_R26281034503.nc"
 DEFAULT_RAD_L1B = "data/DITL2/L1B/LIBERA_L1B_RAD-4CH_V0-7-0_20260712T001238_20260712T040726_R26281034503.nc"
-DEFAULT_MODIS_GEO = "apps/l2/data/proxy_imagery/MYD03.A2014193.0305.061.2018053133301.hdf"
-DEFAULT_MODIS_L1B = "apps/l2/data/proxy_imagery/MYD02HKM.A2014193.0305.061.2018054015044.hdf"
+DEFAULT_MODIS_GEO = "l2/data/proxy_imagery/MYD03.A2014193.0305.061.2018053133301.hdf"
+DEFAULT_MODIS_L1B = "l2/data/proxy_imagery/MYD02HKM.A2014193.0305.061.2018054015044.hdf"
 
-DEFAULT_WINDOW_S = 300.0     # same default as apps/l2/run_dev_step1.py
-DEFAULT_SCAN_PAD_S = 500.0   # same default as apps/l2/run_dev_step1.py
+DEFAULT_WINDOW_S = 300.0     # same default as l2/run_dev_step1.py
+DEFAULT_SCAN_PAD_S = 500.0   # same default as l2/run_dev_step1.py
 DEFAULT_COMPONENTS = est.CT_STRIPE_COMPONENTS   # ("nadir", "forward", "cross")
 
 
 def get_frame_latlon(cam_l1b, frame_idx, ds=None):
     """Real per-pixel geolocation for ONE camera frame, as a (FPA_NX,
     FPA_NY) pair of (lat, lon) arrays -- same field names/transpose/fill-
-    value convention apps/l2/elevation_sweep_timing.py's own geo_report()
+    value convention l2/elevation_sweep_timing.py's own geo_report()
     and pool_stripe_pixels() use, so this lines up with the rest of the
     pipeline's idea of "this frame's geolocation". Off-Earth/fill pixels
     (FILL_VAL=-999, or already-NaN) come back as NaN -- Platform.mod2cam()
@@ -170,7 +170,7 @@ def project_frame_psf(cam_lat, cam_lon, src_lon, src_lat, src_rad):
 def stripe_mask_for_frame(ds, frame_idx, mask_f, header, retriever,
                           components=DEFAULT_COMPONENTS):
     """Run the SAME per-frame WFOV pixel-mask retrieval
-    apps/l2/elevation_sweep_timing.py's pool_stripe_pixels() uses -- the
+    l2/elevation_sweep_timing.py's pool_stripe_pixels() uses -- the
     camera's real, sparse per-exposure pixel-selection pattern (named
     "nadir"/"forward"/"cross" stripe components, out of
     libcam.mask.retrieve_mask's MaskRetriever) -- but return the full
@@ -256,7 +256,7 @@ def tighten_source_crop(modis, lon_min, lon_max, lat_min, lat_max, verbose=True)
 
 def pick_one_frame(cam_l1b, rad_l1b, lat0, lon0, window_s, scan_pad_s,
                    verbose=True):
-    """Same chop() apps/l2/run_dev_step1.py uses to find the tile's real
+    """Same chop() l2/run_dev_step1.py uses to find the tile's real
     camera-frame window, then the single frame inside it closest in time
     to the matched radiometer sample -- the original stage-2 single-
     frame proof (--single-frame); project_tile_frames() below loops over

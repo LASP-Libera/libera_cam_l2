@@ -72,7 +72,7 @@ overlaps) and every candidate is printed with its index so --sweep-index
 can override the pick.
 
 Duplicates pool_stripe_pixels/haversine helpers from
-apps/l2/nadir_radiometer_overlap.py rather than importing it -- no precedent
+l2/nadir_radiometer_overlap.py rather than importing it -- no precedent
 in this repo for one apps/ script importing another (established
 2026-10-06).
 
@@ -141,8 +141,8 @@ deciding how large an RT domain can be before its own angles stop being
 
 Usage
 -----
-    python apps/l2/elevation_sweep_timing.py <CAM_L1B.nc> --rad <RAD-4CH.nc>
-    python apps/l2/elevation_sweep_timing.py <CAM_L1B.nc> --rad <RAD-4CH.nc> --sweep-index 2
+    python l2/elevation_sweep_timing.py <CAM_L1B.nc> --rad <RAD-4CH.nc>
+    python l2/elevation_sweep_timing.py <CAM_L1B.nc> --rad <RAD-4CH.nc> --sweep-index 2
 """
 
 import argparse
@@ -301,7 +301,7 @@ def pool_stripe_pixels(granule, components=CT_STRIPE_COMPONENTS, max_frames=None
     absent from every dict (same convention as the angle fields) if
     `varname` isn't in the granule at all -- e.g. a plain, non-proxy L1B
     has no "Radiance"/"L1X_Proxy_Mask" field yet, so a caller requesting
-    those gets them back only once run against an apps/l2/build_l1x.py
+    those gets them back only once run against an l2/build_l1x.py
     "L1X" file."""
     ds = open_granule(granule)
     mask_f = _first(ds, MASK_FIELDS)

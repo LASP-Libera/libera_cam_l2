@@ -1,5 +1,5 @@
 """
-apps/l2/fetch_proxy_scene.py
+l2/fetch_proxy_scene.py
 
 Dev-step-2, stage 1 of the "L1X" proxy-radiance plan (see
 docs/L1B_TO_L2_ROADMAP.md): dev-step-1 runs the real camera geometry
@@ -43,15 +43,15 @@ Usage
     # list candidate MODIS granules with time offset AND real viewing/
     # solar geometry at the tile -- downloads only the small geolocation
     # files, not any L1B radiance yet
-    python apps/l2/fetch_proxy_scene.py
+    python l2/fetch_proxy_scene.py
 
     # same, for VIIRS (SNPP/NOAA-20/NOAA-21) -- download not wired up yet
-    python apps/l2/fetch_proxy_scene.py --instrument viirs
+    python l2/fetch_proxy_scene.py --instrument viirs
 
     # after looking at the printed table, download candidate index 0's
     # (closest-in-time, not necessarily best-geometry -- read the table)
     # geolocation + L1B radiance
-    python apps/l2/fetch_proxy_scene.py --download 0
+    python l2/fetch_proxy_scene.py --download 0
 """
 import argparse
 import datetime
@@ -92,7 +92,7 @@ MODIS_BAND = 4
 
 def _add_l2_cam_to_path(l2_cam_root):
     """Put L2a/l2_cam's vendored er3t on sys.path -- same convention as
-    apps/l2/run_tile_rt.py's rt_shdom(), so this script works whether or
+    l2/run_tile_rt.py's rt_shdom(), so this script works whether or
     not er3t has also been `pip install -e`'d."""
     er3t_dir = os.path.join(l2_cam_root, "software", "er3t")
     if er3t_dir not in sys.path:
@@ -296,9 +296,9 @@ def parse_args():
                        "as printed) -- geolocation + L1B radiance (MODIS "
                        "only, for now). Omit to just print the comparison "
                        "table and pick later.")
-    p.add_argument("--out-dir", default="apps/l2/data/proxy_imagery",
+    p.add_argument("--out-dir", default="l2/data/proxy_imagery",
                   help="where downloaded files go "
-                       "(default: apps/l2/data/proxy_imagery)")
+                       "(default: l2/data/proxy_imagery)")
     return p.parse_args()
 
 

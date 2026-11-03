@@ -2,7 +2,7 @@
 """Build the INPUT manifest (JSON) for the dev-step-1 one-tile run
 (Sebastian, 2026-10-21/22).
 
-Per the 2026-10-20 plan: our apps/l2 pipeline actually reads and
+Per the 2026-10-20 plan: our l2 pipeline actually reads and
 validates three files via a formal input manifest -- camera L1B,
 radiometer L1B, ERA5 reanalysis -- unlike l2_cam/main_cam_l2.py, whose
 manifest plumbing exists but is never acted on (it loads a manifest, then
@@ -34,7 +34,7 @@ forces the naive read.
 L1B always requires reading all 85 GB off disk -- that's unavoidable
 for a content checksum to mean anything, no way around it on a cold
 run. But this script gets rerun during active development without the
-underlying files changing, so `apps/l2/data/.checksum_cache.json` keys
+underlying files changing, so `l2/data/.checksum_cache.json` keys
 each cached checksum on (path, size, mtime) and skips the re-read
 entirely when those match -- a no-op rerun becomes near-instant instead
 of paying the full read again. Delete that file (or pass
@@ -53,7 +53,7 @@ from libera_utils.io.manifest import ManifestType
 DEFAULT_CAM_L1B = "data/DITL2/L1B/LIBERA_L1B_CAM_V0-3-2_20260712T001717_20260712T040151_R26281034503.nc"
 DEFAULT_RAD_L1B = "data/DITL2/L1B/LIBERA_L1B_RAD-4CH_V0-7-0_20260712T001238_20260712T040726_R26281034503.nc"
 DEFAULT_ERA5 = "data/DITL2/ERA5/39cfa975852f21f218547a3706f8c128.nc"
-DEFAULT_OUT_DIR = "apps/l2/data"
+DEFAULT_OUT_DIR = "l2/data"
 CACHE_FILENAME = ".checksum_cache.json"
 
 CHUNK_BYTES = 64 * 1024 * 1024  # 64 MB per read -- bounded memory regardless of file size
@@ -119,12 +119,12 @@ def main():
     p.add_argument("--era5", default=DEFAULT_ERA5)
     p.add_argument("--brdf-land", default=None,
                   help="path to a real, date-matched VJ143C1 BRDF file "
-                       "(e.g. from apps/l2/fetch_brdf.py) -- optional; "
+                       "(e.g. from l2/fetch_brdf.py) -- optional; "
                        "omit to keep using l2_cam's own hardcoded "
                        "(stale, 2021-05-18) sample BRDF file")
     p.add_argument("--out-dir", default=DEFAULT_OUT_DIR,
                    help="where the LIBERA_INPUT_MANIFEST_*.json gets written "
-                        "(default: apps/l2/data)")
+                        "(default: l2/data)")
     p.add_argument("--no-checksum-cache", action="store_true",
                    help="force a fresh checksum even if a cached one matches "
                         "this file's current size/mtime")

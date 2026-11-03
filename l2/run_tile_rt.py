@@ -44,7 +44,7 @@ What this does NOT reuse from Hong's code
       test files (var_rad/var_lon/... HDF5 paths via h5py). Our real
       Libera CAM L1B granules have a different shape entirely (per-frame
       2-D rasters, MaskRetriever component membership, stride-selected
-      pixels) -- that's apps/l2/elevation_sweep_timing.py's job
+      pixels) -- that's l2/elevation_sweep_timing.py's job
       (pool_stripe_pixels et al.), reused here instead, from the OTHER
       repo (--libera-cam-root). This also means data['sza_cam'] etc. in
       this script are the same per-CAMERA-PIXEL L1B fields Hong's code
@@ -128,7 +128,7 @@ import numpy as np
 
 
 # ── repo bootstrap ──────────────────────────────────────────────────────
-# this file lives in <libera-cam-root>/apps/l2/, same as
+# this file lives in <repo-root>/l2/, same as
 # elevation_sweep_timing.py, which it imports directly as a sibling
 # module (same established-this-session convention: no cross-script
 # imports otherwise, see that file's own docstring).
@@ -773,7 +773,7 @@ def radiance_and_counts_for_footprints(data, rad, pooled, footprint_info,
 def bin_measured_radiance_to_grid(data, pooled, require_proxy_mask=True,
                                   verbose=True):
     """Bin pooled's per-pixel "measured" camera Radiance
-    (pooled['cam_rad'] -- an apps/l2/build_l1x.py "L1X"-only field, see
+    (pooled['cam_rad'] -- an l2/build_l1x.py "L1X"-only field, see
     tile()'s MEASURED_RADIANCE_FIELDS / pool_stripe_pixels' extra_fields)
     onto the SAME (lon_land, lat_land) RT/BRDF grid rad/refl_app/
     refl_noatm live on -- one mean per grid cell -- so the RT-calculated
@@ -1309,7 +1309,7 @@ def _era5_windspeed_field(era5_path, lon_grid, lat_grid, time_utc):
 
 
 # "Measured" radiance fields (added 2026-10-22): present only in an
-# apps/l2/build_l1x.py "L1X" file, absent (silently) in a plain,
+# l2/build_l1x.py "L1X" file, absent (silently) in a plain,
 # real/dark camera L1B -- see pool_stripe_pixels' extra_fields and
 # bin_measured_radiance_to_grid() below.
 MEASURED_RADIANCE_FIELDS = {"cam_rad": "Radiance", "cam_proxy_mask": "L1X_Proxy_Mask"}
@@ -1470,7 +1470,7 @@ def tile(cam_l1b, match, tile_km, dx_km, dy_km, l2_cam_root,
     field untouched.
 
     brdf_land_path (added 2026-10-22): if given, a real VJ143C1 (or
-    VNP43C1) land BRDF file -- e.g. from apps/l2/fetch_brdf.py -- used
+    VNP43C1) land BRDF file -- e.g. from l2/fetch_brdf.py -- used
     INSTEAD of l2_cam's own hardcoded sample/brdf_parms/VJ143C1...h5
     (which is dated 2021-05-18, a fixed date unrelated to any real
     tile's own date). Unlike era5_path (which overrides read_brdf_parms'
@@ -1499,7 +1499,7 @@ def tile(cam_l1b, match, tile_km, dx_km, dy_km, l2_cam_root,
 
     # "Measured" radiance (added 2026-10-22, for the RT-vs-measured
     # comparison Sebastian asked for once an L1X file is available) --
-    # present only when cam_l1b is an apps/l2/build_l1x.py "L1X" file
+    # present only when cam_l1b is an l2/build_l1x.py "L1X" file
     # (pool_stripe_pixels' extra_fields mechanism silently omits these
     # keys from EVERY per_frame entry for a plain, non-proxy L1B, so
     # "cam_rad" in per_frame[0] is a reliable per-granule presence
@@ -1923,7 +1923,7 @@ def rt_shdom(data, l2_cam_root, wavelength_nm, altitude_km, Niter=10,
     that default and is unaffected by the cloud_cot/_cer/_cth/_cgt
     kwargs below. Pass cloud_cot>0 for a single uniform cloud layer
     across the whole domain (added 2026-10-23 for
-    apps/l2/run_angular_sweep.py's EVO clear-vs-cloudy angular-dependence
+    l2/run_angular_sweep.py's EVO clear-vs-cloudy angular-dependence
     study -- see that script).
 
     vza_grid/vaa_grid (added 2026-10-23, same EVO script, same day --
@@ -2085,7 +2085,7 @@ def rt_shdom(data, l2_cam_root, wavelength_nm, altitude_km, Niter=10,
     cld0 = er3t.pre.cld.cld_gen_cop(
         fname=f"{fdir}/cld.pk",
         # cloud_cot/_cer/_cth/_cgt (added 2026-10-23, Sebastian's EVO
-        # angular-dependence sweep -- apps/l2/run_angular_sweep.py): a
+        # angular-dependence sweep -- l2/run_angular_sweep.py): a
         # single uniform cloud layer across the whole domain, same
         # cld_gen_cop() call as always -- only the four numbers are now
         # caller-settable. Defaults (cot=0.0) keep every EXISTING caller's

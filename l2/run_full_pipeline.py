@@ -1,5 +1,5 @@
 """
-apps/l2/run_full_pipeline.py
+l2/run_full_pipeline.py
 
 Dev-step-1, "one call" wrapper (Sebastian, 2026-10-23, item B of the
 2026-10-23 next-steps list: "streamline dev-step-1 into one call").
@@ -7,11 +7,11 @@ Dev-step-1, "one call" wrapper (Sebastian, 2026-10-23, item B of the
 Today this needs four separate invocations, with a human reading each
 one's printed output and typing a path or an index into the next:
 
-    python apps/l2/fetch_proxy_scene.py                  # look at the table
-    python apps/l2/fetch_proxy_scene.py --download N     # then download N
-    python apps/l2/build_l1x.py --modis-geo ... --modis-l1b ...
-    python apps/l2/build_input_manifest.py --cam-l1b <the L1X file>
-    python apps/l2/run_dev_step1.py --input-manifest <the new manifest>
+    python l2/fetch_proxy_scene.py                  # look at the table
+    python l2/fetch_proxy_scene.py --download N     # then download N
+    python l2/build_l1x.py --modis-geo ... --modis-l1b ...
+    python l2/build_input_manifest.py --cam-l1b <the L1X file>
+    python l2/run_dev_step1.py --input-manifest <the new manifest>
 
 This script runs all four steps in one call, in-process (importing each
 script as a module and calling its own functions directly -- not
@@ -81,7 +81,7 @@ tile pick's own time_utc when --proxy-date isn't given, as
 YYYYMMDDTHHMM) that is: (a) folded into the default L1X filename and the
 default run_dev_step1 --out/--l2-output-dir, so different proxy-date
 runs don't overwrite each other's outputs, and (b) appended as one JSON
-line to apps/l2/data/proxy_run_log.jsonl -- a running ledger of every
+line to l2/data/proxy_run_log.jsonl -- a running ledger of every
 proxy date processed, which MODIS candidate was chosen for it, and
 where its L1X/manifest/outputs ended up, so multiple dates processed at
 different times stay traceable.
@@ -90,22 +90,22 @@ Usage
 -----
     # fully automatic: search, auto-pick by geometry, download, splice,
     # build a fresh manifest, run dev-step-1 with QA plots + L2 output
-    python apps/l2/run_full_pipeline.py --write-l2-output --plot
+    python l2/run_full_pipeline.py --write-l2-output --plot
 
     # same, but splice in a MODIS scene from a different day (the real
     # camera/radiometer L1B baseline is unchanged) -- note the wider
     # default search window when no time-of-day is given
-    python apps/l2/run_full_pipeline.py --proxy-date 2026-09-03 --plot
+    python l2/run_full_pipeline.py --proxy-date 2026-09-03 --plot
 
     # a specific time too, and a tighter search window
-    python apps/l2/run_full_pipeline.py \\
+    python l2/run_full_pipeline.py \\
         --proxy-date 2026-09-03T18:40:00 --search-window-min 45 --plot
 
     # override the auto-picked MODIS candidate (see the printed table)
-    python apps/l2/run_full_pipeline.py --download-index 2 --plot
+    python l2/run_full_pipeline.py --download-index 2 --plot
 
     # anything run_dev_step1.py itself accepts also works here, e.g.
-    python apps/l2/run_full_pipeline.py --plot --max-vza-deg 15 --niter 20
+    python l2/run_full_pipeline.py --plot --max-vza-deg 15 --niter 20
 """
 import argparse
 import datetime
@@ -372,7 +372,7 @@ def build_manifest(args, l1x_path):
 
 def append_run_log(args, proxy_tag, t_center, had_time, chosen, l1x_path,
                    manifest_path, dev_step1_out):
-    """Append one JSON line to apps/l2/data/proxy_run_log.jsonl -- a
+    """Append one JSON line to l2/data/proxy_run_log.jsonl -- a
     running ledger of every proxy date processed (which MODIS candidate
     was picked, where its L1X/manifest/output ended up), so multiple
     dates processed at different times stay traceable. Best-effort: a
@@ -457,7 +457,7 @@ def parse_args():
     p.add_argument("--download-index", type=int, default=None, metavar="INDEX",
                   help="step 1: override the auto-picked (geometry-closest) "
                        "candidate -- see the printed table")
-    p.add_argument("--proxy-out-dir", default="apps/l2/data/proxy_imagery",
+    p.add_argument("--proxy-out-dir", default="l2/data/proxy_imagery",
                   help="step 1: where downloaded MODIS files go "
                        "(default: %(default)s)")
     p.add_argument("--input-manifest", default=None,
@@ -524,7 +524,7 @@ def parse_args():
                        "%(default)s)")
     p.add_argument("--no-checksum-cache", action="store_true")
     p.add_argument("--no-run-log", action="store_true",
-                  help="skip appending to apps/l2/data/%s" % RUN_LOG_FILENAME)
+                  help="skip appending to l2/data/%s" % RUN_LOG_FILENAME)
     return p.parse_known_args()
 
 
@@ -603,7 +603,7 @@ def main():
     extra_defaults = []
     if not _has_flag(passthrough, "--out"):
         extra_defaults += ["--out",
-                          "apps/l2/data/dev_step1_result_PROXY%s.yml" % proxy_tag]
+                          "l2/data/dev_step1_result_PROXY%s.yml" % proxy_tag]
     if not _has_flag(passthrough, "--l2-output-dir"):
         extra_defaults += ["--l2-output-dir", "output_l2/PROXY%s" % proxy_tag]
     run_dev_step1_argv = (

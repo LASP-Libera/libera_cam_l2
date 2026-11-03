@@ -1006,7 +1006,7 @@ def make_measured_vs_rt_plot(data, rad, rad_meas, n_px_per_cell, lat0, lon0,
         camera-pixel count backing that cell.
     (E) Per-cell scatter, RT vs. measured REFLECTANCE (refl_app/
         refl_meas) -- only drawn if both are given. refl_meas needs a
-        real MODIS-source SZA (see apps/l2/build_l1x.py's
+        real MODIS-source SZA (see l2/build_l1x.py's
         l1x_modis_source_sza_mean_deg attribute, only present in an L1X
         file built after 2026-10-22); refl_app is run_tile_rt.tile()'s
         own existing RT-side conversion, already computed upstream for

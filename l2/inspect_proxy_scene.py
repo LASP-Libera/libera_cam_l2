@@ -1,10 +1,10 @@
 """
-apps/l2/inspect_proxy_scene.py
+l2/inspect_proxy_scene.py
 
 Dev-step-2, stage 1b of the "L1X" proxy-radiance plan: sanity-check a
 MODIS scene fetch_proxy_scene.py downloaded -- confirm it actually opens,
 crop it to the real tile (same --tile-km / dlat_per_km / dlon_per_km
-convention apps/l2/run_tile_rt.py uses for its own RT domain, so the
+convention l2/run_tile_rt.py uses for its own RT domain, so the
 cropped extent matches what dev-step-1 already treats as "the tile"),
 and report whether the band-4 (~555 nm) radiance in that crop looks like
 real data (sane magnitude, not all-NaN, a sensible fraction of valid
@@ -19,12 +19,12 @@ Usage
 -----
     # auto-finds the one geo/L1B file pair in --img-dir (errors with a
     # list if it finds more than one -- pass --geo/--l1b explicitly then)
-    python apps/l2/inspect_proxy_scene.py
+    python l2/inspect_proxy_scene.py
 
     # make a quick plot too (tile box + band-4 radiance, land/ocean
     # context) -- opens an interactive matplotlib window, no --plot-only
     # Agg nonsense since you are the one running this
-    python apps/l2/inspect_proxy_scene.py --plot
+    python l2/inspect_proxy_scene.py --plot
 """
 import argparse
 import glob
@@ -43,11 +43,11 @@ if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
 DEFAULT_TILE_PICK = "tile_pick.yml"
-DEFAULT_IMG_DIR = "apps/l2/data/proxy_imagery"
+DEFAULT_IMG_DIR = "l2/data/proxy_imagery"
 DEFAULT_TILE_KM = 100.0
 MODIS_BAND = 4
 
-# Same equirectangular approximation apps/l2/run_tile_rt.py's tile() uses
+# Same equirectangular approximation l2/run_tile_rt.py's tile() uses
 # for its own RT-domain extent (dlat_per_km/dlon_per_km, with the 0.05
 # floor on cos(lat) near the poles) -- kept identical here so "the tile"
 # means the same ground box in both places.

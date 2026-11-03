@@ -1,11 +1,11 @@
 """
-apps/l2/build_l1x.py
+l2/build_l1x.py
 
 Dev-step-2, stage 3 of the "L1X" proxy-radiance plan (Sebastian,
 2026-10-23): write the actual "L1X" file -- a cropped copy of the real
 CAM L1B, covering just the exposures in the tile's chop() time window,
 with the Radiance variable overwritten ONLY at pixels belonging to the
-camera's real "nadir" stripe component (apps/l2/proxy_radiance.py's
+camera's real "nadir" stripe component (l2/proxy_radiance.py's
 restrict_to_stripe(), via libcam.mask.retrieve_mask.MaskRetriever) AND
 covered by the downloaded MODIS/VIIRS proxy scene. Every other pixel --
 non-nadir components (forward/cross/adm/raps/limb/unexplained), and
@@ -15,7 +15,7 @@ untouched, per Sebastian's explicit instruction: "the others can remain
 what they were in the original L1B file").
 
 Everything that finds, downloads and projects the proxy radiance is
-unchanged from apps/l2/proxy_radiance.py (imported, not duplicated) --
+unchanged from l2/proxy_radiance.py (imported, not duplicated) --
 this script adds the "copy L1B, splice in only the selected-component
 pixels, write a new file" step on top, plus one thing proxy_radiance.py
 never needed: a UNITS conversion. Caught independently while building
@@ -42,9 +42,9 @@ instruction not to display the untouched elements.
 
 Usage
 -----
-    python apps/l2/build_l1x.py
-    python apps/l2/build_l1x.py --plot   # show only the overwritten pixels
-    python apps/l2/build_l1x.py --components nadir,forward  # widen later
+    python l2/build_l1x.py
+    python l2/build_l1x.py --plot   # show only the overwritten pixels
+    python l2/build_l1x.py --components nadir,forward  # widen later
 """
 import argparse
 import datetime
@@ -72,7 +72,7 @@ MODIS_RADIANCE_UM_TO_CAMERA_NM = 1.0e-3
 # Sebastian, 2026-10-23: nadir stripe only for now; forward/cross/adm/
 # raps/limb stay as whatever the original L1B had (not populated yet).
 DEFAULT_COMPONENTS = ("nadir",)
-DEFAULT_OUT_DIR = "apps/l2/data/l1x"
+DEFAULT_OUT_DIR = "l2/data/l1x"
 
 
 def l1x_path_for(cam_l1b, out_dir=DEFAULT_OUT_DIR):
@@ -93,7 +93,7 @@ def splice_into_l1b_crop(ds, first_frame, max_frames, cam_rad_by_frame,
     load it into memory, and overwrite the Radiance variable's values at
     exactly the pixels project_tile_frames() produced a finite value for
     (already restricted to ``components`` and to pixels the proxy source
-    crop actually covers -- see apps/l2/proxy_radiance.py). Every other
+    crop actually covers -- see l2/proxy_radiance.py). Every other
     pixel of every frame in the crop -- including every pixel of a frame
     not in ``cam_rad_by_frame`` at all -- is left exactly as it was in
     the original L1B.
@@ -133,7 +133,7 @@ def splice_into_l1b_crop(ds, first_frame, max_frames, cam_rad_by_frame,
     ds_out["Radiance"] = ds_out["Radiance"].copy(data=new_rad)
     ds_out["Radiance"].attrs["l1x_proxy_note"] = (
         "Pixels where L1X_Proxy_Mask==1 are MODIS/VIIRS-proxy-derived "
-        "(apps/l2/build_l1x.py, components=%s); every other pixel is the "
+        "(l2/build_l1x.py, components=%s); every other pixel is the "
         "ORIGINAL LIBERA L1B value, unmodified (dark/pre-launch "
         "placeholder, not a realistic radiance)." % ",".join(components))
 

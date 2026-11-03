@@ -11,7 +11,17 @@ venv/
 # point the repo at them).
 data/DITL2
 data/DITL2/
-apps/
+
+# Generated pipeline output (manifests, proxy imagery cache, QA plots,
+# run log). This used to be apps/l2/data/ -- a leftover default path
+# string copied verbatim from libera-cam-proxy's own apps/l2/ layout,
+# which this standalone repo doesn't have (everything lives directly
+# under l2/). Fixed 2026-11-03; now under l2/data/.
+l2/data/
+
+# SHDOM scratch and per-process logs written at the repo root during a run.
+tmp-data/
+shdom-run*.sHdOmNG-log.*
 
 # cam_l2's own sample/reference data (surface mask, BRDF climatology,
 # demo camera L1B) -- external, large (~700MB combined), never
