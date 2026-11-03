@@ -156,11 +156,17 @@ def _main(from_table=False, table_dir=None, family="all", az=0.0, plot=None,
             cfg.report()
             kw = cfg.as_kwargs("az_rot")
             kw.update(gen_over)
-            # az_rot != 0 means this stripe tracks the mechanism azimuth
-            if cfg.az_rot:
+            # az_rot: 0=NONE (fixed), 1=NORMAL (+= AZ), 2=INVERTED (-= AZ).
+            # Fixed 2026-11-03: previously treated az_rot as a bool and always
+            # added AZ, which gave RAPS (az_rot=2, INVERTED) the wrong sign.
+            if cfg.az_rot == 1:
                 kw["sr"] = (kw.get("sr") or 0) + a.az
-                lbl = "%s (az_rot=%s, AZ=%.2f -> sr=%.2f)" % (
-                    fam, cfg.az_rot, a.az, kw["sr"])
+                lbl = "%s (az_rot=NORMAL, AZ=%.2f -> sr=%.2f)" % (
+                    fam, a.az, kw["sr"])
+            elif cfg.az_rot == 2:
+                kw["sr"] = (kw.get("sr") or 0) - a.az
+                lbl = "%s (az_rot=INVERTED, AZ=%.2f -> sr=%.2f)" % (
+                    fam, a.az, kw["sr"])
             else:
                 lbl = "%s (fixed, sr=%s)" % (fam, kw.get("sr"))
             items.append((lbl, stripe_mask(**kw)))

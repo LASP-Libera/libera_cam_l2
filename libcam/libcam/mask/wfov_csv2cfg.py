@@ -175,9 +175,10 @@ class StripeCfg(_Cfg):
     """Arguments for ``stripe_mask``, plus the az_rot flag.
 
     ``az_rot`` is NOT a ``stripe_mask`` argument. It is the table's AZ-rotation
-    flag (0 = fixed, 2 = rotate with the mechanism azimuth on the RAPS stripe);
-    ``combine_masks`` consumes it and adds the azimuth to ``sr``. Use
-    ``as_kwargs('az_rot')`` to get a dict safe to splat into ``stripe_mask``.
+    flag: 0 = NONE (fixed), 1 = NORMAL (mechanism azimuth added to ``sr``),
+    2 = INVERTED (azimuth subtracted from ``sr``) — matches the FSW enum.
+    ``combine_masks`` consumes it. Use ``as_kwargs('az_rot')`` to get a dict
+    safe to splat into ``stripe_mask``.
     """
     _fields = ("xc", "yc", "fr", "sy", "sr", "su", "sd", "az_rot")
 

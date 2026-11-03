@@ -14,7 +14,9 @@ Two frame-dependent inputs, deliberately kept separate because they are
 different mechanisms:
 
 ``az``      the mechanism azimuth, in degrees. Added to ``sr`` for stripes whose
-            table ``az_rot`` flag is non-zero — in practice the raps stripe only.
+            table ``az_rot`` flag is NORMAL(1) or INVERTED(2) — added for NORMAL,
+        subtracted for INVERTED (0/NONE leaves ``sr`` unchanged). In practice
+        the raps stripe only.
             It is viewing geometry, not a table parameter, so it is always
             supplied by the caller.
 ``frame``   the frame index, which drives the **ADM precession**: the angular bins
@@ -203,9 +205,13 @@ def combine_masks(tbl, enabled, az=0.0, frame=0, overrides=None,
                 cfg.report()
             kw = cfg.as_kwargs("az_rot")
             kw.update(gen_over)
-            if cfg.az_rot:
-                # this stripe tracks the mechanism azimuth
+            # az_rot: 0=NONE (fixed), 1=NORMAL (+= az), 2=INVERTED (-= az).
+            # Fixed 2026-11-03: previously treated az_rot as a bool and always
+            # added az, which gave RAPS (az_rot=2, INVERTED) the wrong sign.
+            if cfg.az_rot == 1:
                 kw["sr"] = (kw.get("sr") or 0) + az
+            elif cfg.az_rot == 2:
+                kw["sr"] = (kw.get("sr") or 0) - az
             layer = stripe_mask(nx if "xp" not in kw else kw.pop("xp"),
                                 ny if "yp" not in kw else kw.pop("yp"), **kw)
 
