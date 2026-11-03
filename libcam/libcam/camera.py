@@ -792,7 +792,10 @@ if __name__ == '__main__':
           f'lateral: {np.nanmin(sl):.2f}–{np.nanmax(sl):.2f} km')
 
     import os
-    outdir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    # NOTE: this file now lives at libcam/libcam/ (one level deeper than
+    # before the 2026-11-03 uv_build re-nesting -- see docs/PATCHES.md), so
+    # it takes one more dirname() hop to reach the repo root than it used to.
+    outdir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
                           'output')
     os.makedirs(outdir, exist_ok=True)
 

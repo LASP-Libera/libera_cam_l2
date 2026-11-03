@@ -21,10 +21,14 @@ def output_dir():
     Figures and generated masks land here rather than the current working
     directory, so results do not depend on where you happened to run from.
     ``output/`` is gitignored.
+
+    NOTE: this file now lives at libcam/libcam/mask/ (one level deeper than
+    before the 2026-11-03 uv_build re-nesting -- see docs/PATCHES.md), so it
+    takes one more ".." to reach the repo root than it used to.
     """
     import os
     d = os.path.normpath(os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "..", "..", "output"))
+        os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "output"))
     os.makedirs(d, exist_ok=True)
     return d
 

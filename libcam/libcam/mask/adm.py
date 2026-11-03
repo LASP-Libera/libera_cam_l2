@@ -249,12 +249,14 @@ def _main(from_table=False, table_dir=None, frame=0, plot=None, table_overrides=
     """
     import argparse, os, sys
     if __package__ in (None, ""):
-        # Running this file as a script (`python libcam/mask/adm.py`) puts
-        # libcam/mask/ on sys.path, not the repo root -- so `import libcam...`
-        # would fail. Walk up three levels to the repo root and add that:
-        #     adm.py  ->  libcam/mask/  ->  libcam/  ->  <repo root>
+        # Running this file as a script (`python libcam/libcam/mask/adm.py`)
+        # puts libcam/libcam/mask/ on sys.path, not the repo root -- so
+        # `import libcam...` would fail. Walk up four levels to the repo
+        # root and add that (one more than before the 2026-11-03 uv_build
+        # re-nesting -- see docs/PATCHES.md):
+        #     adm.py  ->  libcam/libcam/mask/  ->  libcam/libcam/  ->  libcam/  ->  <repo root>
         _root = os.path.abspath(__file__)
-        for _ in range(3):
+        for _ in range(4):
             _root = os.path.dirname(_root)
         sys.path.insert(0, _root)
 

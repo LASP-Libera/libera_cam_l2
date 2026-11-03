@@ -71,10 +71,13 @@ __all__ = [
     "split_overrides", "apply_table_overrides", "table_params",
 ]
 
-# docs/wfov_tables/ relative to the repository root
+# docs/wfov_tables/ relative to the repository root. NOTE: this file now
+# lives at libcam/libcam/mask/ (one level deeper than before the 2026-11-03
+# uv_build re-nesting -- see docs/PATCHES.md), so it takes one more ".." to
+# reach the repo root than it used to.
 TABLE_DIR = os.path.normpath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                 "..", "..", "docs", "wfov_tables"))
+                 "..", "..", "..", "docs", "wfov_tables"))
 
 STRIPE_FAMILIES = ("nadir", "forward", "cross", "raps")
 

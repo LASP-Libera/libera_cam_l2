@@ -40,10 +40,11 @@ import numpy as np
 if __package__ in (None, ""):
     # Unlike the single-family modules, this one imports its siblings at module
     # level -- so the repo root has to be on sys.path *before* those imports,
-    # not inside _main(). Walk up three levels when run as a script:
-    #     combine_masks.py  ->  libcam/mask/  ->  libcam/  ->  <repo root>
+    # not inside _main(). Walk up four levels when run as a script (one more
+    # than before the 2026-11-03 uv_build re-nesting -- see docs/PATCHES.md):
+    #     combine_masks.py  ->  libcam/libcam/mask/  ->  libcam/libcam/  ->  libcam/  ->  <repo root>
     _root = os.path.abspath(__file__)
-    for _ in range(3):
+    for _ in range(4):
         _root = os.path.dirname(_root)
     sys.path.insert(0, _root)
 
