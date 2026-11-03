@@ -18,15 +18,39 @@ This pulls `software/er3t` and `software/shdom` at the exact commits this repo i
 ## 2. Build SHDOM
 
 Requires a Fortran compiler (`gfortran`), CMake, and an MPI
-implementation (`openmpi` or similar) -- `shdom` here is always
-MPI-linked, no separate serial build. `make mpi` below shells out to
-`cmake` itself (see `software/shdom/Makefile`); if `cmake` isn't
-installed, `cmake: not found` leaves `build/` empty and the follow-on
-`make` fails with "No targets specified" -- a different problem than
-missing gfortran/MPI, and easy to mistake for one. Install it with
-your package manager if `which cmake` comes up empty (`sudo apt-get
-install cmake` / `conda install -c conda-forge cmake` / `pip install
-cmake` all work; the last two need no root).
+implementation -- `shdom` here is always MPI-linked, no separate
+serial build. Three separate things have to be present, and each
+missing one fails differently, two steps apart from where the actual
+cause is, which makes this easy to mis-diagnose one piece at a time
+(ask first, don't guess -- `which gfortran cmake mpifort` and check
+each is non-empty before building):
+
+- **CMake.** `make mpi` shells out to `cmake` itself (see
+  `software/shdom/Makefile`); if it isn't installed, `cmake: not
+  found` leaves `build/` empty and the follow-on `make` fails with
+  "No targets specified" two steps downstream of the real cause.
+  Install with `sudo apt-get install cmake` / `conda install -c
+  conda-forge cmake` / `pip install cmake` (the last two need no
+  root).
+- **gfortran.** The actual Fortran compiler.
+- **The MPI *development* package, not just its runtime/CLI tools.**
+  On Debian/Ubuntu this is `libopenmpi-dev` specifically -- a
+  *different* package from `openmpi-bin`/`libopenmpi3`, which alone
+  are not enough: CMake's `find_package(MPI REQUIRED COMPONENTS
+  Fortran)` needs the Fortran `.mod` files `libopenmpi-dev` installs
+  (at `/usr/lib/<arch>/fortran/gfortran-mod-<N>/openmpi/` on
+  Debian/Ubuntu -- the exact `<N>` is hard-coded per Debian's own
+  packaging, unrelated to your actual installed gfortran version, so
+  don't be alarmed if the number in a CMake error doesn't match `gcc
+  --version`). Missing just this one package produces a confusing,
+  two-levels-deep error: CMake gets far enough to identify your
+  Fortran compiler, then fails with `Imported target
+  "MPI::MPI_Fortran" includes non-existent path ".../gfortran-mod-N/
+  openmpi"` -- which looks like a broken/corrupted MPI install, but
+  usually just means `apt-get install libopenmpi-dev` was never run.
+  `sudo apt-get install openmpi-bin libopenmpi-dev` installs both
+  (conda: `conda install -c conda-forge openmpi`, which includes the
+  Fortran bindings by default).
 
 ```bash
 cd software/shdom
