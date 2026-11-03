@@ -17,9 +17,16 @@ This pulls `software/er3t` and `software/shdom` at the exact commits this repo i
 
 ## 2. Build SHDOM
 
-Requires a Fortran compiler (`gfortran`) and an MPI implementation
-(`openmpi` or similar) -- `shdom` here is always MPI-linked, no
-separate serial build.
+Requires a Fortran compiler (`gfortran`), CMake, and an MPI
+implementation (`openmpi` or similar) -- `shdom` here is always
+MPI-linked, no separate serial build. `make mpi` below shells out to
+`cmake` itself (see `software/shdom/Makefile`); if `cmake` isn't
+installed, `cmake: not found` leaves `build/` empty and the follow-on
+`make` fails with "No targets specified" -- a different problem than
+missing gfortran/MPI, and easy to mistake for one. Install it with
+your package manager if `which cmake` comes up empty (`sudo apt-get
+install cmake` / `conda install -c conda-forge cmake` / `pip install
+cmake` all work; the last two need no root).
 
 ```bash
 cd software/shdom
