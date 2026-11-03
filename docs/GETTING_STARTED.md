@@ -221,12 +221,23 @@ plus the checksum cache, is why `l2/data/` is also gitignored.
 ### 5b. cam_l2 reference data (surface mask, BRDF climatology)
 
 `run_tile_rt.tile()` reads a few things through `cam_l2`'s own
-`data/sample/input.yml` -- the EASE2 land/coast surface mask, MERRA2
-ocean-wind reanalysis, and (as a fallback only, overridden whenever
-`run_full_pipeline.py` auto-fetches or is given `--brdf-land`) a sample
-VJ143C1 land BRDF file. `input.yml` itself is tiny and **is** tracked in
-this repo (`data/sample/input.yml`); the files it points at are not, and
-are gitignored. These come from Hong Chen's own internal `l2_cam`
+`data/sample/input.yml` -- the EASE2 land/coast surface mask, a sample
+VJ143C1 land BRDF file, and a sample MERRA2 ocean-wind reanalysis file.
+In a real-tile run, neither BRDF sample file's *values* actually survive
+into the output -- both are overridden -- but not the same way. The land
+BRDF is overridden whenever `run_full_pipeline.py` auto-fetches a real
+BRDF file or is given `--brdf-land` (the common case): the config's file
+path is swapped *before* anything is read, so the sample VJ143C1 file is
+never actually opened. MERRA2 is overridden unconditionally, on every
+real-tile run -- `era5` is a required input-manifest role, not an opt-in
+flag like `--brdf-land` -- but only the resulting *windspeed values* are
+overwritten with real ERA5 windspeed, *after* Hong's own
+`read_brdf_parms()` has already opened the sample MERRA2 file to
+establish the ocean lon/lat grid. So the MERRA2 file still has to
+physically exist and be readable, even though its contents don't end up
+mattering (see the `brdf_parms/` bullet below). `input.yml` itself is
+tiny and **is** tracked in this repo (`data/sample/input.yml`); the
+files it points at are not, and are gitignored. These come from Hong Chen's own internal `l2_cam`
 project, which isn't published anywhere external -- **for now, request
 them from a team member (e.g. Sebastian)**, don't go looking for a
 public source. That's expected to change for `surface_mask/` at least:
@@ -246,13 +257,17 @@ The exact files, by subdirectory (~700 MB combined):
   config's `cam.f_geo`/`cam.f_rad` -- unconfirmed, see TODO below):
   - `cam_geo.h5`
   - `cam_rad.h5`
-- `data/sample/brdf_parms/` (~537 MB) -- **likely not needed**:
-  `brdf.f_land` (the VJ143C1 file) is overridden by
-  `run_full_pipeline.py`'s real auto-fetched BRDF file before it's ever
-  read; `brdf.f_ocean` (the MERRA2 file) is slated to be dropped going
-  forward (see `docs/ROADMAP.md`):
-  - `MERRA2_400.inst1_2d_asm_Nx.20210518.nc4`
-  - `VJ143C1.A2021138.002.2024158071341.h5`
+- `data/sample/brdf_parms/` (~537 MB) -- **needed on disk, even
+  though neither file's values end up mattering** (see above for the
+  two different override mechanisms):
+  - `MERRA2_400.inst1_2d_asm_Nx.20210518.nc4` -- opened by
+    `read_brdf_parms()` to get the ocean grid, then its windspeed
+    values are overwritten with real ERA5; **must be present**, or
+    that read fails.
+  - `VJ143C1.A2021138.002.2024158071341.h5` -- never actually opened
+    once `--brdf-land`/auto-fetch provides a real file, since the
+    config path is swapped first; **likely safe to omit** in that
+    case, but keep it unless you've confirmed that for your run.
 
 Place them (copied or symlinked) at those exact paths, e.g.:
 
@@ -262,11 +277,12 @@ ln -s /path/to/your/copy/cam_l1b      data/sample/cam_l1b
 ln -s /path/to/your/copy/brdf_parms   data/sample/brdf_parms
 ```
 
-If you'd rather not chase down all ~700 MB up front: `surface_mask/` is
-the only one confirmed required, so you can start with just that
-symlink and see whether `run_full_pipeline.py` still completes without
-`cam_l1b/`/`brdf_parms/` in place -- that would also settle the TODO
-below one way or the other.
+If you'd rather not chase down all ~700 MB up front: `surface_mask/`
+and `brdf_parms/` are both confirmed needed on disk (see above), so
+`cam_l1b/` is the one actually worth testing by omission -- symlink the
+other two and see whether `run_full_pipeline.py` still completes
+without `cam_l1b/` in place; that would settle its own TODO below one
+way or the other.
 
 **TODO (Sebastian, 2026-11-03):** of these three, only `surface_mask/`
 is actually fixed, standard, orbit-independent reference data -- unlike
