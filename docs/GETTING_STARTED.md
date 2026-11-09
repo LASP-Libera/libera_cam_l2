@@ -191,16 +191,39 @@ already-cached files.
 **Every user sets their own token in their own shell rc file --
 nothing is ever hardcoded in this repository.**
 
+Get the token from <https://urs.earthdata.nasa.gov/> -- NOT the
+ladsweb.modaps.eosdis.nasa.gov "LAADS DAAC tokens" page some older
+docs (including a warning message printed by this project's own
+vendored `er3t` dependency) point you at; that page is broken as of
+2026-11 (confirmed 2026-11-09 -- dead link). If you already have an
+Earthdata account:
+
+1. Log in at <https://urs.earthdata.nasa.gov/> and click the "Generate
+   Token" tab -- or go directly to
+   `https://urs.earthdata.nasa.gov/users/<your-username>/user_tokens`
+   (replace `<your-username>` with your own Earthdata username) and
+   click Generate Token there.
+2. Add it to your shell rc file and reload it:
+
 ```bash
 # bash/zsh (~/.bashrc or ~/.zshrc):
 export EARTHDATA_TOKEN="your-token-here"
+source ~/.bashrc
 
 # csh/tcsh (~/.cshrc):
 setenv EARTHDATA_TOKEN "your-token-here"
+source ~/.cshrc
 ```
 
-Get a token at
-https://ladsweb.modaps.eosdis.nasa.gov/learn/download-files-using-laads-daac-tokens
+3. Verify it's set, and optionally that it actually works end to end
+   (downloads a small test image via the same `er3t.util.daac` call
+   this project's own BRDF/proxy-scene fetching uses internally --
+   needs internet, ~30 s):
+
+```bash
+python l2/tests/verify_earthdata_token.py             # just checks it's set
+python l2/tests/verify_earthdata_token.py --worldview  # actually exercises it
+```
 
 ## 5. External data (not in this repository)
 
@@ -412,7 +435,11 @@ symlinked in, `--rad-l1b`/`--era5` to point at a different orbit).
 
 ## 8. Docker
 
-```bash
-docker build -t libera_cam_l2 .
-docker run --cpus=4.0 -e EARTHDATA_TOKEN -v /path/to/real/data:/app/data libera_cam_l2
-```
+See `docs/DOCKER.md` -- this is still a draft, not yet tested end to
+end, and the two lines that used to be here were already stale (they
+predate the actual `Dockerfile`/`.dockerignore`/`run_docker_smoketest.sh`
+that now exist: the real entrypoint is `l2/run_dev_step1.py`, which
+doesn't need `EARTHDATA_TOKEN` at all, and the cam_l2 reference data
+is baked into the image at build time rather than mounted with `-v`).
+`docs/DOCKER.md` is the maintained source of truth for this; trust it
+over this section if they ever disagree again.
