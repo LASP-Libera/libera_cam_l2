@@ -66,6 +66,13 @@ Hong's public `master`/`release/v0.2.0-alpha.1` branches (removing it
 on `libera-l2-fixes` doesn't erase it from earlier history). Hong should
 rotate/revoke that Earthdata token.
 
+**Follow-up (2026-11-09):** the same function's warning message still
+pointed at the dead `ladsweb.modaps.eosdis.nasa.gov` "LAADS DAAC tokens"
+page (404 as of 2026-11) -- fixed to point at the correct
+`https://urs.earthdata.nasa.gov/` Generate-Token flow instead, matching
+`libera_cam_l2`'s own `docs/GETTING_STARTED.md` section 4. Commit
+`c09c292` on `libera-l2-fixes`.
+
 ## 4. Command-line argument buffer overflow in `shdTool_put` (`shdom`)
 
 `src/tools/shdTool_put.f90` declared its argument buffer as
